@@ -1,21 +1,14 @@
-var endpoint = _configuration["ADI:Endpoint"];
-var apiKey = _configuration["ADI:ApiKey"];
+using System.Text.RegularExpressions;
 
-var client = new DocumentAnalysisClient(
-    new Uri(endpoint),
-    new AzureKeyCredential(apiKey)
-);
+string ein = Regex.Match(text, @"\b\d{2}-?\d{7}\b").Value;
 
-using var stream = new MemoryStream(pdfBytes);
+string assetsRaw = Regex.Match(
+    text,
+    @"Total Assets\s+([\d,]+)"
+).Groups[1].Value;
 
-var operation = await client.AnalyzeDocumentAsync(
-    WaitUntil.Completed,
-    "prebuilt-document",
-    stream
-);
-
-AnalyzeResult result = operation.Value;
-string text = result.Content;
+decimal totalAssets = 0;
+decimal.TryParse(assetsRaw.Replace(",", ""), out totalAssets);
 
 
 
