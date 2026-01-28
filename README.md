@@ -1,28 +1,11 @@
-namespace DocumentProcessingApp.Models
-{
-    public class ExtractedFormDto
-    {
-        public int Id { get; set; }   // optional (DB identity)
+ALTER TABLE ExtractedData
+ADD
+    CompanyName NVARCHAR(200),
+    Street NVARCHAR(300),
+    CityStateZip NVARCHAR(200),
+    DateIncorporated DATE,
+    ECheck NVARCHAR(50);
 
-        // ===== FORM 1120 FIELDS =====
-
-        public string EIN { get; set; }
-
-        public string Name { get; set; }
-
-        public string Street { get; set; }
-
-        public string CityStateZip { get; set; }
-
-        public int TaxYear { get; set; }
-
-        public decimal TotalAssets { get; set; }
-
-        public DateTime? DateIncorporated { get; set; }
-
-        public string ECheck { get; set; }
-    }
-}
 
 
 
