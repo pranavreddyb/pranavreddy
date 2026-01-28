@@ -1,29 +1,48 @@
-public void Insert(ExtractedFormDto dto)
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using DocumentProcessingApp.Models;
+
+namespace DocumentProcessingApp.Repositories
 {
-    using var connection = new SqlConnection(_connectionString);
-    connection.Open();
+    public class ExtractedDataRepository
+    {
+        private readonly string _connectionString;
 
-    var sql = @"
-        INSERT INTO ExtractedData
-        (EIN, TaxYear, TotalAssets, CompanyName, Street, CityStateZip, DateIncorporated, ECheck)
-        VALUES
-        (@EIN, @TaxYear, @TotalAssets, @CompanyName, @Street, @CityStateZip, @DateIncorporated, @ECheck)
-    ";
+        public ExtractedDataRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
 
-    using var cmd = new SqlCommand(sql, connection);
-    cmd.Parameters.AddWithValue("@EIN", dto.EIN);
-    cmd.Parameters.AddWithValue("@TaxYear", dto.TaxYear);
-    cmd.Parameters.AddWithValue("@TotalAssets", dto.TotalAssets);
-    cmd.Parameters.AddWithValue("@CompanyName", (object?)dto.CompanyName ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("@Street", (object?)dto.Street ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("@CityStateZip", (object?)dto.CityStateZip ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("@DateIncorporated", (object?)dto.DateIncorporated ?? DBNull.Value);
-    cmd.Parameters.AddWithValue("@ECheck", (object?)dto.ECheck ?? DBNull.Value);
+        public void Insert(ExtractedFormDto dto)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
 
-    cmd.ExecuteNonQuery();
+            var sql = @"
+                INSERT INTO ExtractedData
+                (EIN, TaxYear, TotalAssets, CompanyName, Street, CityStateZip, DateIncorporated, ECheck)
+                VALUES
+                (@EIN, @TaxYear, @TotalAssets, @CompanyName, @Street, @CityStateZip, @DateIncorporated, @ECheck)
+            ";
 
-    Console.WriteLine("✅ SQL INSERT SUCCESS");
+            using var cmd = new SqlCommand(sql, connection);
+
+            cmd.Parameters.AddWithValue("@EIN", dto.EIN);
+            cmd.Parameters.AddWithValue("@TaxYear", dto.TaxYear);
+            cmd.Parameters.AddWithValue("@TotalAssets", dto.TotalAssets);
+            cmd.Parameters.AddWithValue("@CompanyName", (object?)dto.CompanyName ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Street", (object?)dto.Street ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CityStateZip", (object?)dto.CityStateZip ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@DateIncorporated", (object?)dto.DateIncorporated ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ECheck", (object?)dto.ECheck ?? DBNull.Value);
+
+            cmd.ExecuteNonQuery();
+
+            Console.WriteLine("✅ DATA INSERTED INTO SQL");
+        }
+    }
 }
+
 
 
 
