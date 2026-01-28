@@ -1,21 +1,18 @@
-var endpoint = _configuration["ADI:Endpoint"];
-var apiKey = _configuration["ADI:ApiKey"];
-
-var client = new DocumentIntelligenceClient(
-    new Uri(endpoint),
-    new AzureKeyCredential(apiKey)
-);
-
 using var stream = new MemoryStream(pdfBytes);
 
-// ✅ THIS is the correct call for your SDK
-var operation = client.AnalyzeDocumentAsync(
+// ✅ CORRECT for your SDK
+var options = new AnalyzeDocumentOptions(
+    modelId: "prebuilt-document",
+    document: stream
+);
+
+var operation = await client.AnalyzeDocumentAsync(
     WaitUntil.Completed,
-    "prebuilt-document",
-    stream
-).Result;
+    options
+);
 
 var result = operation.Value;
+
 
 
 
