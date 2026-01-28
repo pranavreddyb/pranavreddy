@@ -1,45 +1,89 @@
-using Microsoft.AspNetCore.Mvc;
-using DocumentProcessingApp.Services;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
+using Azure;
+using Azure.AI.FormRecognizer.DocumentAnalysis;
+using DocumentProcessingApp.Models;
+using DocumentProcessingApp.Repositories;
 
-namespace DocumentProcessingApp.Controllers
+namespace DocumentProcessingApp.Services
 {
-    public class UploadController : Controller
+    public class DocumentService
     {
-        private readonly DocumentService _service;
+        private readonly IConfiguration _configuration;
+        private readonly IExtractedDataRepository _repository;
 
-        public UploadController(DocumentService service)
+        public DocumentService(
+            IConfiguration configuration,
+            IExtractedDataRepository repository)
         {
-            _service = service;
+            _configuration = configuration;
+            _repository = repository;
         }
 
-        [HttpGet]
-        public IActionResult Upload()
+        public async Task ProcessDocument(byte[] pdfBytes)
         {
-            return View();
-        }
+            Console.WriteLine("=== ProcessDocument CALLED ===");
 
-        [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("Invalid file");
+            var endpoint = _configuration["ADI:Endpoint"];
+            var apiKey = _configuration["ADI:ApiKey"];
 
-            using var ms = new MemoryStream();
-            await file.CopyToAsync(ms);
+            Console.WriteLine($"ADI ENDPOINT: {endpoint}");
+            Console.WriteLine($"ADI API KEY EXISTS: {!string.IsNullOrEmpty(apiKey)}");
 
-            // 🔴 PROOF THIS METHOD IS CALLED
-            Console.WriteLine("UPLOAD CONTROLLER: File received");
-            Console.WriteLine($"File size: {ms.Length}");
+            if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(apiKey))
+                throw new Exception("ADI config missing in appsettings.json");
 
-            // 🔴 THIS LINE MUST RUN
-            await _service.ProcessDocument(ms.ToArray());
+            var client = new DocumentAnalysisClient(
+                new Uri(endpoint),
+                new AzureKeyCredential(apiKey)
+            );
 
-            Console.WriteLine("UPLOAD CONTROLLER: ProcessDocument finished");
+            using var stream = new MemoryStream(pdfBytes);
 
-            return Ok("File processed and saved to SQL");
+            AnalyzeDocumentOperation operation =
+                await client.AnalyzeDocumentAsync(
+                    WaitUntil.Completed,
+                    "prebuilt-document",
+                    stream
+                );
+
+            AnalyzeResult result = operation.Value;
+
+            string text = result.Content;
+            Console.WriteLine("=== OCR TEXT START ===");
+            Console.WriteLine(text);
+            Console.WriteLine("=== OCR TEXT END ===");
+
+            // ===== EXTRACT DATA FROM PDF TEXT =====
+            string ein = Regex.Match(text, @"\b\d{2}-?\d{7}\b").Value;
+
+            string assetsRaw = Regex.Match(
+                text,
+                @"Total Assets\s*([\d,]+)",
+                RegexOptions.IgnoreCase
+            ).Groups[1].Value;
+
+            decimal.TryParse(
+                assetsRaw.Replace(",", ""),
+                out decimal totalAssets
+            );
+
+            var dto = new ExtractedFormDto
+            {
+                EIN = ein,
+                TaxYear = DateTime.Now.Year,
+                TotalAssets = totalAssets
+            };
+
+            _repository.Insert(dto);
+
+            Console.WriteLine("=== DATA SAVED TO DATABASE ===");
         }
     }
 }
+
 
 
 
