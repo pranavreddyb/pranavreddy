@@ -1,17 +1,22 @@
-using var stream = new MemoryStream(pdfBytes);
+var endpoint = _configuration["ADI:Endpoint"];
+var apiKey = _configuration["ADI:ApiKey"];
 
-// ✅ CORRECT for your SDK
-var options = new AnalyzeDocumentOptions(
-    modelId: "prebuilt-document",
-    document: stream
+var client = new DocumentIntelligenceClient(
+    new Uri(endpoint),
+    new AzureKeyCredential(apiKey)
 );
 
+using var stream = new MemoryStream(pdfBytes);
+
+// ✅ THIS IS THE CORRECT OVERLOAD FOR YOUR SDK
 var operation = await client.AnalyzeDocumentAsync(
     WaitUntil.Completed,
-    options
+    "prebuilt-document",
+    stream
 );
 
 var result = operation.Value;
+
 
 
 
