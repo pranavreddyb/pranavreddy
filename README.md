@@ -1,38 +1,23 @@
-using Microsoft.AspNetCore.Mvc;
-using DocumentProcessingApp.Services;
+// STEP 1: Call Azure Document Intelligence (ADI)
 
-namespace DocumentProcessingApp.Controllers
-{
-    public class UploadController : Controller
-    {
-        private readonly DocumentService _service;
+var endpoint = _configuration["ADI:Endpoint"];
+var apiKey = _configuration["ADI:ApiKey"];
 
-        public UploadController(DocumentService service)
-        {
-            _service = service;
-        }
+var client = new DocumentIntelligenceClient(
+    new Uri(endpoint),
+    new AzureKeyCredential(apiKey)
+);
 
-        [HttpGet]
-        public IActionResult Upload()
-        {
-            return View();
-        }
+using var stream = new MemoryStream(pdfBytes);
 
-        [HttpPost]
-        public IActionResult Upload(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("Invalid file");
+var operation = client.AnalyzeDocument(
+    WaitUntil.Completed,
+    "prebuilt-document",
+    stream
+);
 
-            using var ms = new MemoryStream();
-            file.CopyTo(ms);
+var result = operation.Value;
 
-            _service.ProcessDocument(ms.ToArray());
-
-            return Ok("File processed and saved to SQL");
-        }
-    }
-}
 
 
 
