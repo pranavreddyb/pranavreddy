@@ -1,5 +1,3 @@
-// STEP 1: Call Azure Document Intelligence (ADI)
-
 var endpoint = _configuration["ADI:Endpoint"];
 var apiKey = _configuration["ADI:ApiKey"];
 
@@ -10,13 +8,15 @@ var client = new DocumentIntelligenceClient(
 
 using var stream = new MemoryStream(pdfBytes);
 
-var operation = client.AnalyzeDocument(
+// ✅ THIS is the correct call for your SDK
+var operation = client.AnalyzeDocumentAsync(
     WaitUntil.Completed,
     "prebuilt-document",
     stream
-);
+).Result;
 
 var result = operation.Value;
+
 
 
 
