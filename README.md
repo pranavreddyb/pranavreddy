@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
@@ -12,11 +13,11 @@ namespace DocumentProcessingApp.Services
     public class DocumentService
     {
         private readonly IConfiguration _configuration;
-        private readonly IExtractedDataRepository _repository;
+        private readonly ExtractedDataRepository _repository;
 
         public DocumentService(
             IConfiguration configuration,
-            IExtractedDataRepository repository)
+            ExtractedDataRepository repository)
         {
             _configuration = configuration;
             _repository = repository;
@@ -26,6 +27,7 @@ namespace DocumentProcessingApp.Services
         {
             Console.WriteLine("=== ProcessDocument CALLED ===");
 
+            // 🔑 Read ADI config
             var endpoint = _configuration["ADI:Endpoint"];
             var apiKey = _configuration["ADI:ApiKey"];
 
@@ -35,6 +37,7 @@ namespace DocumentProcessingApp.Services
             if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(apiKey))
                 throw new Exception("ADI config missing in appsettings.json");
 
+            // 🤖 Azure Document Intelligence client
             var client = new DocumentAnalysisClient(
                 new Uri(endpoint),
                 new AzureKeyCredential(apiKey)
@@ -42,6 +45,7 @@ namespace DocumentProcessingApp.Services
 
             using var stream = new MemoryStream(pdfBytes);
 
+            // 📄 Analyze PDF
             AnalyzeDocumentOperation operation =
                 await client.AnalyzeDocumentAsync(
                     WaitUntil.Completed,
@@ -52,16 +56,23 @@ namespace DocumentProcessingApp.Services
             AnalyzeResult result = operation.Value;
 
             string text = result.Content;
+
+            // 🔍 PRINT OCR TEXT (VERY IMPORTANT)
             Console.WriteLine("=== OCR TEXT START ===");
             Console.WriteLine(text);
             Console.WriteLine("=== OCR TEXT END ===");
 
-            // ===== EXTRACT DATA FROM PDF TEXT =====
-            string ein = Regex.Match(text, @"\b\d{2}-?\d{7}\b").Value;
+            // ===== EXTRACT EIN =====
+            string ein = Regex.Match(
+                text,
+                @"Employer Identification Number[:\s]*([\d\s-]{9,})",
+                RegexOptions.IgnoreCase
+            ).Groups[1].Value.Replace(" ", "").Replace("-", "");
 
+            // ===== EXTRACT TOTAL ASSETS =====
             string assetsRaw = Regex.Match(
                 text,
-                @"Total Assets\s*([\d,]+)",
+                @"Total\s+Assets[:\s]*([\d,]+)",
                 RegexOptions.IgnoreCase
             ).Groups[1].Value;
 
@@ -70,6 +81,20 @@ namespace DocumentProcessingApp.Services
                 out decimal totalAssets
             );
 
+            // ❌ STOP if data not found
+            if (string.IsNullOrWhiteSpace(ein))
+            {
+                Console.WriteLine("❌ EIN NOT FOUND — NOT SAVING");
+                return;
+            }
+
+            if (totalAssets == 0)
+            {
+                Console.WriteLine("❌ TOTAL ASSETS NOT FOUND — NOT SAVING");
+                return;
+            }
+
+            // ✅ SAVE TO DB
             var dto = new ExtractedFormDto
             {
                 EIN = ein,
@@ -83,6 +108,7 @@ namespace DocumentProcessingApp.Services
         }
     }
 }
+
 
 
 
