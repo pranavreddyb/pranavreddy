@@ -1,43 +1,81 @@
-using Microsoft.Data.SqlClient;
+using Azure;
+using Azure.AI.FormRecognizer.DocumentAnalysis;
 using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 using DocumentProcessingApp.Models;
+using DocumentProcessingApp.Repositories;
 
-namespace DocumentProcessingApp.Repositories
+namespace DocumentProcessingApp.Services
 {
-    public class ExtractedDataRepository
+    public class DocumentService
     {
-        private readonly string _connectionString;
+        private readonly IConfiguration _configuration;
+        private readonly ExtractedDataRepository _repository;
 
-        public ExtractedDataRepository(IConfiguration configuration)
+        public DocumentService(
+            IConfiguration configuration,
+            ExtractedDataRepository repository)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _configuration = configuration;
+            _repository = repository;
         }
 
-        public void Insert(ExtractedFormDto dto)
+        public async Task ProcessDocument(byte[] pdfBytes)
         {
-            using var conn = new SqlConnection(_connectionString);
-            conn.Open();
+            Console.WriteLine("=== ProcessDocument CALLED ===");
 
-            var cmd = new SqlCommand(@"
-                INSERT INTO ExtractedData
-                (CompanyName, Street, CityStateZip, EIN, TaxYear, TotalAssets, DateIncorporated, ECheck)
-                VALUES
-                (@CompanyName, @Street, @CityStateZip, @EIN, @TaxYear, @TotalAssets, @DateIncorporated, @ECheck)
-            ", conn);
+            var endpoint = _configuration["ADI:Endpoint"];
+            var apiKey = _configuration["ADI:ApiKey"];
 
-            cmd.Parameters.AddWithValue("@CompanyName", (object?)dto.CompanyName ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Street", (object?)dto.Street ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@CityStateZip", (object?)dto.CityStateZip ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@EIN", (object?)dto.EIN ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@TaxYear", dto.TaxYear);
-            cmd.Parameters.AddWithValue("@TotalAssets", dto.TotalAssets);
-            cmd.Parameters.AddWithValue("@DateIncorporated", (object?)dto.DateIncorporated ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ECheck", (object?)dto.ECheck ?? DBNull.Value);
+            if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(apiKey))
+                throw new Exception("ADI config missing");
 
-            cmd.ExecuteNonQuery();
+            var client = new DocumentAnalysisClient(
+                new Uri(endpoint),
+                new AzureKeyCredential(apiKey));
+
+            using var stream = new MemoryStream(pdfBytes);
+
+            var operation = await client.AnalyzeDocumentAsync(
+                WaitUntil.Completed,
+                "prebuilt-document",
+                stream);
+
+            var text = operation.Value.Content;
+
+            Console.WriteLine("=== OCR TEXT START ===");
+            Console.WriteLine(text);
+            Console.WriteLine("=== OCR TEXT END ===");
+
+            // ===== REGEX EXTRACTION =====
+            var dto = new ExtractedFormDto
+            {
+                CompanyName = Regex.Match(text, @"(?i)Name\s*:\s*(.+)").Groups[1].Value,
+                Street = Regex.Match(text, @"(?i)Address\s*:\s*(.+)").Groups[1].Value,
+                CityStateZip = Regex.Match(text, @"(?i)City.*ZIP\s*:\s*(.+)").Groups[1].Value,
+                EIN = Regex.Match(text, @"\b\d{2}-\d{7}\b").Value,
+                TaxYear = int.TryParse(
+                    Regex.Match(text, @"Tax\s*Year\s*(\d{4})").Groups[1].Value,
+                    out int y) ? y : DateTime.Now.Year,
+                TotalAssets = decimal.TryParse(
+                    Regex.Match(text, @"Total\s+assets\s+([\d,]+)").Groups[1].Value.Replace(",", ""),
+                    out decimal a) ? a : 0,
+                ECheck = Regex.Match(text, @"E-?Check\s*(Yes|No)", RegexOptions.IgnoreCase).Groups[1].Value
+            };
+
+            if (!string.IsNullOrEmpty(dto.EIN))
+            {
+                _repository.Insert(dto);
+                Console.WriteLine("=== DATA SAVED TO DATABASE ===");
+            }
+            else
+            {
+                Console.WriteLine("=== EIN NOT FOUND — NOT SAVING ===");
+            }
         }
     }
 }
+
 
 
 
