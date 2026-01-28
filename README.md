@@ -1,43 +1,37 @@
+using System.Data.SqlClient;
 using DocumentProcessingApp.Models;
-using DocumentProcessingApp.Repositories;
+using Microsoft.Extensions.Configuration;
 
-namespace DocumentProcessingApp.Services
+namespace DocumentProcessingApp.Repositories
 {
-    public class DocumentService
+    public class ExtractedDataRepository
     {
-        private readonly ExtractedDataRepository _repository;
+        private readonly string _connectionString;
 
-        public DocumentService(ExtractedDataRepository repository)
+        public ExtractedDataRepository(IConfiguration configuration)
         {
-            _repository = repository;
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public void ProcessDocument(byte[] pdfBytes)
+        public void Insert(ExtractedFormDto dto)
         {
-            // STEP 1: Mock ADI output (for now)
-            var adiData = new Dictionary<string, string>
-            {
-                { "EIN", "12 3456789" },
-                { "TotalAssets", "1,000,000" }
-            };
+            using var connection = new SqlConnection(_connectionString);
 
-            // STEP 2: Normalize data
-            string ein = adiData["EIN"].Replace(" ", "");
-            decimal totalAssets = decimal.Parse(
-                adiData["TotalAssets"].Replace(",", "")
+            var query = @"INSERT INTO ExtractedData (EIN, TaxYear, TotalAssets)
+                          VALUES (@EIN, @TaxYear, @TotalAssets)";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@EIN", dto.EIN);
+            command.Parameters.AddWithValue("@TaxYear", dto.TaxYear);
+            command.Parameters.AddWithValue(
+                "@TotalAssets",
+                dto.TotalAssets.HasValue ? dto.TotalAssets.Value : DBNull.Value
             );
 
-            // STEP 3: Create DTO
-            var dto = new ExtractedFormDto
-            {
-                EIN = ein,
-                TaxYear = 2024,
-                TotalAssets = totalAssets
-            };
-
-            // STEP 4: Send DTO to repository
-            _repository.Insert(dto);
+            connection.Open();
+            command.ExecuteNonQuery();
         }
     }
 }
+
 
