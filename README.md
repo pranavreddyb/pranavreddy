@@ -1,4 +1,19 @@
+using Microsoft.AspNetCore.Mvc;
+using ReadingListApi.Models;
+using ReadingListApi.Data;
 
+namespace ReadingListApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ReadingItemsController : ControllerBase
+    {
+        // GET: api/readingitems
+        [HttpGet]
+        public ActionResult<IEnumerable<ReadingItem>> GetAll()
+        {
+            return Ok(ReadingItemStore.Items);
+        }
 
 
 
