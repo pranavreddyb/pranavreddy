@@ -1,108 +1,88 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure;
-using Azure.AI.FormRecognizer.DocumentAnalysis;
-using Microsoft.Extensions.Configuration;
-using DocumentProcessingApp.Models;
-using DocumentProcessingApp.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using ReadingListApi.Models;
+using ReadingListApi.Data;
 
-namespace DocumentProcessingApp.Services
+namespace ReadingListApi.Controllers
 {
-    public class DocumentService
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ReadingItemsController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly ExtractedDataRepository _repository;
-
-        public DocumentService(
-            IConfiguration configuration,
-            ExtractedDataRepository repository)
+        // GET: api/readingitems
+        [HttpGet]
+        public ActionResult<IEnumerable<ReadingItem>> GetAll()
         {
-            _configuration = configuration;
-            _repository = repository;
+            return Ok(ReadingItemStore.Items);
         }
 
-        public async Task ProcessDocument(byte[] pdfBytes)
+        // GET: api/readingitems/5
+        [HttpGet("{id}")]
+        public ActionResult<ReadingItem> GetById(int id)
         {
-            Console.WriteLine("=== ProcessDocument STARTED ===");
+            var item = ReadingItemStore.Items.FirstOrDefault(x => x.Id == id);
 
-            // 🔹 Read ADI config
-            var endpoint = _configuration["ADI:Endpoint"];
-            var apiKey = _configuration["ADI:ApiKey"];
+            if (item == null)
+                return NotFound("Item not found");
 
-            if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(apiKey))
-                throw new Exception("ADI configuration missing");
+            return Ok(item);
+        }
 
-            // 🔹 Create ADI client
-            var client = new DocumentAnalysisClient(
-                new Uri(endpoint),
-                new AzureKeyCredential(apiKey)
-            );
+        // POST: api/readingitems
+        [HttpPost]
+        public ActionResult<ReadingItem> Create(ReadingItem newItem)
+        {
+            if (string.IsNullOrWhiteSpace(newItem.Title))
+                return BadRequest("Title is required");
 
-            using var stream = new MemoryStream(pdfBytes);
+            newItem.Id = ReadingItemStore.GetNextId();
 
-            // 🔹 Call ADI (prebuilt-document)
-            var operation = await client.AnalyzeDocumentAsync(
-                WaitUntil.Completed,
-                "prebuilt-document",
-                stream
-            );
+            if (!IsValidStatus(newItem.Status))
+                return BadRequest("Status must be Planned, Reading or Done");
 
-            var result = operation.Value;
+            ReadingItemStore.Items.Add(newItem);
 
-            // 🔹 Get first document
-            var document = result.Documents.FirstOrDefault();
-            if (document == null)
-            {
-                Console.WriteLine("❌ No document detected");
-                return;
-            }
+            return CreatedAtAction(nameof(GetById),
+                new { id = newItem.Id },
+                newItem);
+        }
 
-            var fields = document.Fields;
+        // PUT: api/readingitems/5
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, ReadingItem updatedItem)
+        {
+            var existingItem = ReadingItemStore.Items.FirstOrDefault(x => x.Id == id);
 
-            // 🔹 Helper to safely read fields
-            string GetField(string key)
-            {
-                if (fields.ContainsKey(key))
-                    return fields[key]?.Content;
-                return null;
-            }
+            if (existingItem == null)
+                return NotFound("Item not found");
 
-            // ===============================
-            // ✅ FORM 1120 FIELD MAPPING
-            // ===============================
-            var dto = new ExtractedFormDto
-            {
-                CompanyName = GetField("Name"),
-                EIN = GetField("EmployerIdentificationNumber"),
-                Street = GetField("Address"),
-                CityStateZip = GetField("CityStateZip"),
+            if (!IsValidStatus(updatedItem.Status))
+                return BadRequest("Status must be Planned, Reading or Done");
 
-                TaxYear = int.TryParse(GetField("TaxYear"), out var taxYear)
-                            ? taxYear
-                            : 0,
+            existingItem.Title = updatedItem.Title;
+            existingItem.Author = updatedItem.Author;
+            existingItem.Status = updatedItem.Status;
 
-                TotalAssets = decimal.TryParse(
-                                    GetField("TotalAssets")?.Replace(",", ""),
-                                    out var assets)
-                                ? assets
-                                : 0,
+            return NoContent();
+        }
 
-                DateIncorporated = DateTime.TryParse(
-                                        GetField("DateIncorporated"),
-                                        out var date)
-                                    ? date
-                                    : null,
+        // DELETE: api/readingitems/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var item = ReadingItemStore.Items.FirstOrDefault(x => x.Id == id);
 
-                ECheck = GetField("ECheck")
-            };
+            if (item == null)
+                return NotFound("Item not found");
 
-            // 🔹 Save to database
-            _repository.Insert(dto);
+            ReadingItemStore.Items.Remove(item);
 
-            Console.WriteLine("✅ DATA SAVED TO DATABASE");
-            Console.WriteLine("=== ProcessDocument FINISHED ===");
+            return NoContent();
+        }
+
+        private bool IsValidStatus(string status)
+        {
+            var validStatuses = new[] { "Planned", "Reading", "Done" };
+            return validStatuses.Contains(status);
         }
     }
 }
