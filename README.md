@@ -1,15 +1,13 @@
-{
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "profiles": {
-    "ReadingListApi": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    }
-  }
-}
+template: `
+  <h1>User Manager</h1>
+
+  <input [(ngModel)]="name" placeholder="Enter name">
+  <button (click)="addUser()">Add</button>
+
+  <ul>
+    <li *ngFor="let user of users">
+      {{ user }}
+      <button (click)="deleteUser(user)">Delete</button>
+    </li>
+  </ul>
+`,
