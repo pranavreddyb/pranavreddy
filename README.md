@@ -1,28 +1,6 @@
-import { Injectable } from '@angular/core';
+<h2>Add Experience</h2>
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ExpService {
-
-  experiences: string[] = [];
-
-  addExperience(exp: string) {
-    const formatted = this.formatExperience(exp);
-    this.experiences.push(formatted);
-  }
-
-  getExperiences() {
-    return this.experiences;
-  }
-
-  removeExperience(index: number) {
-    this.experiences.splice(index, 1);
-  }
-
-  formatExperience(exp: string): string {
-    return `• Worked on ${exp}
-• Gained hands-on experience in ${exp}
-• Improved problem-solving skills`;
-  }
-}
+<input #expInput type="text" placeholder="Enter experience">
+<button (click)="addExperience(expInput.value); expInput.value=''">
+  Add
+</button>
