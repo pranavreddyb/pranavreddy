@@ -1,13 +1,17 @@
-<h2>Add Experience</h2>
+import { Injectable } from '@angular/core';
 
-<input type="text" placeholder="Enter experience" #expInput>
+@Injectable({
+  providedIn: 'root'
+})
+export class ExpService {
 
-<button (click)="addExperience(expInput.value)">
-  Add
-</button>
+  experiences: string[] = [];
 
-<ul>
-  <li *ngFor="let exp of experiences">
-    {{ exp }}
-  </li>
-</ul>
+  addExperience(exp: string) {
+    this.experiences.push(exp);
+  }
+
+  getExperiences() {
+    return this.experiences;
+  }
+}
