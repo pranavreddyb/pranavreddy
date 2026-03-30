@@ -3,19 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ExpService } from '../exp.service';
 
 @Component({
-  selector: 'app-add-exp',
+  selector: 'app-list-exp',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './add-exp.html',
-  styleUrl: './add-exp.css'
+  templateUrl: './list-exp.html',
+  styleUrl: './list-exp.css'
 })
-export class AddExpComponent {
+export class ListExpComponent {
 
-  constructor(private expService: ExpService) {}
+  constructor(public expService: ExpService) {}
 
-  addExperience(value: string) {
-    if (value) {
-      this.expService.addExperience(value);
-    }
-  }
 }
