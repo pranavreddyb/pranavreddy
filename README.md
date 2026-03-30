@@ -1,6 +1,8 @@
-<h2>Add Experience</h2>
+<h2>Experience List</h2>
 
-<input #expInput type="text" placeholder="Enter experience">
-<button (click)="addExperience(expInput.value); expInput.value=''">
-  Add
-</button>
+<ul>
+  <li *ngFor="let exp of expService.experiences; let i = index">
+    <pre>{{ exp }}</pre>
+    <button (click)="expService.removeExperience(i)">Delete</button>
+  </li>
+</ul>
