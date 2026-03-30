@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
-import { AddExpComponent } from './add-exp/add-exp.component';
-import { ListExpComponent } from './list-exp/list-exp.component';
+<h2>Add Experience</h2>
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [AddExpComponent, ListExpComponent],
-  templateUrl: './app.html'
-})
-export class AppComponent {}
+<input type="text" placeholder="Enter experience" #expInput>
+
+<button (click)="addExperience(expInput.value)">
+  Add
+</button>
+
+<ul>
+  <li *ngFor="let exp of experiences">
+    {{ exp }}
+  </li>
+</ul>
