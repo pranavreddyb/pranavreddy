@@ -1,27 +1,38 @@
-/* list spacing */
-ul {
-  padding-left: 20px;
-  margin: 0;
+/* container main board */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* each line */
-li {
-  margin-bottom: 8px;
-  line-height: 1.5;
+/* main heading */
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: bold;
 }
 
-/* delete button */
-.delete-btn {
-  margin-top: 10px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 8px;
-  cursor: pointer;
+/* section headings */
+h2 {
+  color: #333;
+  margin-bottom: 10px;
 }
 
-/* delete hover */
-.delete-btn:hover {
-  background: #dc2626;
+/* inner cards */
+.card {
+  background: #f9fafb;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+/* hover */
+.card:hover {
+  transform: translateY(-4px);
 }
