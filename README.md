@@ -1,32 +1,36 @@
-.input-group {
-  display: flex;
-  gap: 10px;
+ul {
+  list-style: none;
+  padding: 0;
 }
 
-input {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  outline: none;
-  transition: 0.2s;
+li {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  position: relative;
+  border-left: 5px solid #6366f1;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
 }
 
-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 5px rgba(99,102,241,0.4);
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
 }
 
-button {
-  padding: 12px 18px;
-  border: none;
-  background: #6366f1;
+.delete-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: #ef4444;
   color: white;
-  border-radius: 8px;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: 0.2s;
 }
 
-button:hover {
-  background: #4f46e5;
+.delete-btn:hover {
+  background: #dc2626;
 }
