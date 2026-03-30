@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AddExpComponent } from './add-exp/add-exp';
-import { ListExpComponent } from './list-exp/list-exp';
+import { AddExpComponent } from './add-exp/add-exp.component';
+import { ListExpComponent } from './list-exp/list-exp.component';
 
 @Component({
   selector: 'app-root',
