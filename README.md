@@ -1,28 +1,13 @@
-ul {
-  padding-left: 20px;
-  margin: 0;
-}
+<div *ngFor="let exp of experiences">
+  <ul>
+    <li *ngFor="let line of getFormattedList(exp)">
+      {{ line }}
+    </li>
+  </ul>
 
-li {
-  background: #f9f9f9;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  line-height: 1.5;
-}
+  <button class="delete-btn" (click)="deleteExperience(exp)">
+    Delete
+  </button>
 
-pre {
-  margin: 0;
-  white-space: pre-wrap;
-  font-family: inherit;
-}
-
-.delete-btn {
-  margin-top: 10px;
-  background: red;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  <hr>
+</div>
