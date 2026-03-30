@@ -1,8 +1,24 @@
-<h2>Add Experience</h2>
+.input-group {
+  display: flex;
+  gap: 10px;
+}
 
-<div class="input-group">
-  <input #expInput type="text" placeholder="Describe your experience...">
-  <button (click)="addExperience(expInput.value); expInput.value=''">
-    Add
-  </button>
-</div>
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5a67d8;
+}
