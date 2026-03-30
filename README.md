@@ -1,17 +1,56 @@
-import { Injectable } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ExpService } from '../exp.service';
 
-@Injectable({
-  providedIn: 'root'
+@Component({
+  selector: 'app-add-exp',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './add-exp.html',
+  styleUrl: './add-exp.css'
 })
-export class ExpService {
+export class AddExpComponent {
 
-  private experiences: string[] = [];
+  constructor(private expService: ExpService) {}
 
-  addExperience(exp: string) {
-    this.experiences.push(exp);
+  addExperience(value: string) {
+    if (value) {
+      const formatted = this.formatExperience(value);
+      this.expService.addExperience(formatted);
+    }
   }
 
-  getExperiences() {
-    return this.experiences;
+  formatExperience(exp: string): string {
+    const text = exp.toLowerCase();
+
+    if (text.includes('project')) {
+      return [
+        'Developed and delivered multiple projects',
+        'Applied practical knowledge in real-world scenarios',
+        'Strengthened problem-solving and debugging skills'
+      ].join('\n');
+    }
+
+    if (text.includes('ai') || text.includes('machine learning')) {
+      return [
+        'Worked on AI/ML concepts and implementations',
+        'Gained hands-on experience with intelligent systems',
+        'Improved analytical and data-driven thinking'
+      ].join('\n');
+    }
+
+    if (text.includes('intern')) {
+      return [
+        'Completed internship with practical exposure',
+        'Collaborated with team members on tasks',
+        'Learned industry-level workflows'
+      ].join('\n');
+    }
+
+    return [
+      `Worked on ${exp}`,
+      `Gained hands-on experience in ${exp}`,
+      'Improved problem-solving skills'
+    ].join('\n');
   }
 }
