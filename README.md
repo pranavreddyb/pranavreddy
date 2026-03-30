@@ -1,16 +1,26 @@
+.card {
+  background: #ffffff;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
-<h2>Experience List</h2>
+ul {
+  margin: 0;
+  padding-left: 20px;
+}
 
-<div *ngFor="let exp of experiences" class="card">
+li {
+  margin-bottom: 8px;
+}
 
-  <ul>
-    <li *ngFor="let line of getFormattedList(exp)">
-      {{ line }}
-    </li>
-  </ul>
-
-  <button class="delete-btn" (click)="deleteExperience(exp)">
-    Delete
-  </button>
-
-</div>
+.delete-btn {
+  margin-top: 10px;
+  background: red;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
