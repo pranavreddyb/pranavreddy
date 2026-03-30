@@ -3,25 +3,48 @@ import { CommonModule } from '@angular/common';
 import { ExpService } from '../exp.service';
 
 @Component({
-  selector: 'app-list-exp',
+  selector: 'app-add-exp',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './list-exp.html',
-  styleUrl: './list-exp.css'
+  templateUrl: './add-exp.html',
+  styleUrl: './add-exp.css'
 })
-export class ListExpComponent {
+export class AddExpComponent {
 
-  experiences: string[] = []; // 👈 THIS WAS MISSING
+  constructor(private expService: ExpService) {}
 
-  constructor(private expService: ExpService) {
-    this.experiences = this.expService.getExperiences();
+  addExperience(value: string) {
+    if (value) {
+      const formatted = this.formatExperience(value); // 👈 uses function
+      this.expService.addExperience(formatted);
+    }
   }
 
-  getFormattedList(exp: string): string[] {
-    return exp.split('\n');
-  }
+  // 👇 PASTE STEP 1 HERE
+  formatExperience(exp: string): string {
 
-  deleteExperience(exp: string) {
-    this.experiences = this.experiences.filter(e => e !== exp);
+    const text = exp.toLowerCase();
+
+    if (text.includes('project')) {
+      return `Developed and delivered multiple projects
+Applied practical knowledge in real-world scenarios
+Strengthened problem-solving and debugging skills`;
+    }
+
+    if (text.includes('ai') || text.includes('machine learning')) {
+      return `Worked on AI/ML concepts and implementations
+Gained hands-on experience with intelligent systems
+Improved analytical and data-driven thinking`;
+    }
+
+    if (text.includes('intern')) {
+      return `Completed internship with practical exposure
+Collaborated with team members on tasks
+Learned industry-level workflows`;
+    }
+
+    return `Worked on ${exp}
+Gained hands-on experience in ${exp}
+Improved problem-solving skills`;
   }
 }
