@@ -1,38 +1,32 @@
-/* main container board */
-.container {
-  max-width: 900px;
-  margin: 50px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+.input-group {
+  display: flex;
+  gap: 10px;
 }
 
-/* heading */
-h1 {
-  text-align: center;
-  color: #111;
-  margin-bottom: 30px;
-  font-size: 32px;
-  font-weight: bold;
-}
-
-/* section titles */
-h2 {
-  color: #222;
-  margin-bottom: 10px;
-}
-
-/* inner cards */
-.card {
-  background: #f8fafc;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 12px;
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
   transition: 0.2s;
 }
 
-/* hover */
-.card:hover {
-  transform: translateY(-4px);
+input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 5px rgba(99,102,241,0.4);
+}
+
+button {
+  padding: 12px 18px;
+  border: none;
+  background: #6366f1;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #4f46e5;
 }
