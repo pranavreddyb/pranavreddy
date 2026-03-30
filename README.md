@@ -1,38 +1,40 @@
-/* layout container */
-.container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-}
-
-/* main heading */
-h1 {
-  text-align: center;
-  color: white;
-  margin-bottom: 30px;
-  font-size: 32px;
-  font-weight: bold;
-}
-
-/* section headings */
-h2 {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-/* card UI */
-.card {
-  background: white;
-  padding: 20px;
-  margin-bottom: 20px;
+/* input container */
+.input-group {
+  display: flex;
+  gap: 10px;
+  background: #ffffff;
+  padding: 18px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-
-  /* smooth hover */
-  transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* hover animation */
-.card:hover {
-  transform: translateY(-4px);
+/* input field */
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
+
+/* input focus */
+input:focus {
+  border-color: #667eea;
+}
+
+/* add button */
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* button hover */
+button:hover {
+  background: #1e40af;
 }
