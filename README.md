@@ -1,17 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ExpService } from '../exp.service';
 
-@Injectable({
-  providedIn: 'root'
+@Component({
+  selector: 'app-add-exp',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './add-exp.html',
+  styleUrl: './add-exp.css'
 })
-export class ExpService {
+export class AddExpComponent {
 
-  experiences: string[] = [];
+  constructor(private expService: ExpService) {}
 
-  addExperience(exp: string) {
-    this.experiences.push(exp);
-  }
-
-  getExperiences() {
-    return this.experiences;
+  addExperience(value: string) {
+    if (value) {
+      this.expService.addExperience(value);
+    }
   }
 }
