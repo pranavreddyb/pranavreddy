@@ -1,29 +1,50 @@
-ul {
-  list-style: none;
-  padding: 0;
-}
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ExpService } from '../exp.service';
 
-li {
-  background: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  position: relative;
-}
+@Component({
+  selector: 'app-add-exp',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './add-exp.html',
+  styleUrl: './add-exp.css'
+})
+export class AddExpComponent {
 
-pre {
-  margin: 0;
-  white-space: pre-wrap;
-}
+  constructor(private expService: ExpService) {}
 
-.delete-btn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  background: red;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
+  addExperience(value: string) {
+    if (value) {
+      const formatted = this.formatExperience(value); // 👈 IMPORTANT
+      this.expService.addExperience(formatted);
+    }
+  }
+
+  // 👇 ADD HERE
+  formatExperience(exp: string): string {
+
+    const text = exp.toLowerCase();
+
+    if (text.includes('project')) {
+      return `• Developed and delivered multiple projects
+• Applied practical knowledge in real-world scenarios
+• Strengthened problem-solving and debugging skills`;
+    }
+
+    if (text.includes('ai') || text.includes('machine learning')) {
+      return `• Worked on AI/ML concepts and implementations
+• Gained hands-on experience with intelligent systems
+• Improved analytical and data-driven thinking`;
+    }
+
+    if (text.includes('intern')) {
+      return `• Completed internship with practical exposure
+• Collaborated with team members on tasks
+• Learned industry-level workflows`;
+    }
+
+    return `• Worked on ${exp}
+• Gained hands-on experience in ${exp}
+• Improved problem-solving skills`;
+  }
 }
