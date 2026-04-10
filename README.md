@@ -1,36 +1,27 @@
-ul {
-  list-style: none;
-  padding: 0;
-}
+<h1>CRUD Application</h1>
 
-li {
-  background: white;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  position: relative;
-  border-left: 5px solid #6366f1;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-}
+<h2>Add Employee</h2>
 
-pre {
-  margin: 0;
-  white-space: pre-wrap;
-  font-family: inherit;
-}
+<input [(ngModel)]="name" placeholder="Name">
+<input [(ngModel)]="role" placeholder="Role">
+<input [(ngModel)]="exp" placeholder="Experience">
 
-.delete-btn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+<button (click)="add()">Add</button>
 
-.delete-btn:hover {
-  background: #dc2626;
-}
+<hr>
+
+<h2>Employee List</h2>
+
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Role</th>
+    <th>Experience</th>
+  </tr>
+
+  <tr *ngFor="let item of items">
+    <td>{{item.name}}</td>
+    <td>{{item.role}}</td>
+    <td>{{item.exp}}</td>
+  </tr>
+</table>
