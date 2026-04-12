@@ -1,27 +1,52 @@
-<h1>CRUD Application</h1>
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
-<h2>Add Employee</h2>
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  name = '';
+  role = '';
+  exp = '';
 
-<input [(ngModel)]="name" placeholder="Name">
-<input [(ngModel)]="role" placeholder="Role">
-<input [(ngModel)]="exp" placeholder="Experience">
+  items: any[] = [];
 
-<button (click)="add()">Add</button>
+  editIndex = -1;
 
-<hr>
+  add() {
+    if (this.editIndex == -1) {
+      this.items.push({
+        name: this.name,
+        role: this.role,
+        exp: this.exp
+      });
+    } else {
+      this.items[this.editIndex].name = this.name;
+      this.items[this.editIndex].role = this.role;
+      this.items[this.editIndex].exp = this.exp;
 
-<h2>Employee List</h2>
+      this.editIndex = -1;
+    }
 
-<table border="1">
-  <tr>
-    <th>Name</th>
-    <th>Role</th>
-    <th>Experience</th>
-  </tr>
+    this.name = '';
+    this.role = '';
+    this.exp = '';
+  }
 
-  <tr *ngFor="let item of items">
-    <td>{{item.name}}</td>
-    <td>{{item.role}}</td>
-    <td>{{item.exp}}</td>
-  </tr>
-</table>
+  edit(i: number) {
+    this.name = this.items[i].name;
+    this.role = this.items[i].role;
+    this.exp = this.items[i].exp;
+
+    this.editIndex = i;
+  }
+
+  delete(i: number) {
+    this.items.splice(i, 1);
+  }
+}
