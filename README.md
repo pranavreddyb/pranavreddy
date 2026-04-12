@@ -1,5 +1,3 @@
-app.html
-
 <h1>CRUD Application</h1>
 
 <h2>Add Employee</h2>
@@ -12,13 +10,12 @@ app.html
   {{ editIndex == -1 ? 'Add' : 'Update' }}
 </button>
 
+<hr>
+
 <h2>Employee List</h2>
 
-<p *ngIf="items.length == 0">No employees added yet.</p>
-
-<table *ngIf="items.length > 0">
+<table border="1">
   <tr>
-    <th>ID</th>
     <th>Name</th>
     <th>Role</th>
     <th>Experience</th>
@@ -26,13 +23,13 @@ app.html
   </tr>
 
   <tr *ngFor="let item of items; let i = index">
-    <td>{{ i + 1 }}</td>
-    <td>{{ item.name }}</td>
-    <td>{{ item.role }}</td>
-    <td>{{ item.exp }}</td>
+    <td>{{item.name}}</td>
+    <td>{{item.role}}</td>
+    <td>{{item.exp}}</td>
+
     <td>
-      <button class="edit-btn" (click)="edit(i)">Edit</button>
-      <button class="delete-btn" (click)="delete(i)">Delete</button>
+      <button (click)="edit(i)">Edit</button>
+      <button (click)="delete(i)">Delete</button>
     </td>
   </tr>
 </table>
