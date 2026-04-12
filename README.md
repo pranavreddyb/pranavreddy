@@ -1,80 +1,61 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 20px;
-}
+app.ts
 
-h1 {
-  color: #1e3a8a;
-  margin-bottom: 20px;
-}
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
-h2 {
-  color: #374151;
-  margin-top: 25px;
-}
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  name = '';
+  role = '';
+  exp = '';
 
-input {
-  padding: 10px;
-  margin: 5px;
-  width: 220px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-}
+  items: any[] = [];
 
-input:focus {
-  outline: none;
-  border-color: #2563eb;
-}
+  editIndex = -1;
 
-button {
-  padding: 9px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
-  margin: 3px;
-  font-size: 14px;
-}
+  add() {
+    if (this.name == '' || this.role == '' || this.exp == '') {
+      alert('Please fill all fields');
+      return;
+    }
 
-button:hover {
-  opacity: 0.9;
-}
+    if (this.editIndex == -1) {
+      this.items.push({
+        name: this.name,
+        role: this.role,
+        exp: this.exp
+      });
+    } else {
+      this.items[this.editIndex].name = this.name;
+      this.items[this.editIndex].role = this.role;
+      this.items[this.editIndex].exp = this.exp;
 
-button:first-of-type {
-  background: #2563eb;
-}
+      this.editIndex = -1;
+    }
 
-table {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
+    this.name = '';
+    this.role = '';
+    this.exp = '';
+  }
 
-th {
-  background: #1f2937;
-  color: white;
-  padding: 12px;
-}
+  edit(i: number) {
+    this.name = this.items[i].name;
+    this.role = this.items[i].role;
+    this.exp = this.items[i].exp;
 
-td {
-  padding: 10px;
-  border-bottom: 1px solid #e5e7eb;
-}
+    this.editIndex = i;
+  }
 
-tr:hover {
-  background: #f9fafb;
-}
-
-.edit-btn,
-button:nth-child(1) {
-  background: #f59e0b;
-}
-
-.delete-btn,
-button:nth-child(2) {
-  background: #ef4444;
+  delete(i: number) {
+    if (confirm('Are you sure to delete?')) {
+      this.items.splice(i, 1);
+    }
+  }
 }
