@@ -1,67 +1,44 @@
-app.ts
+app.html
 
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { EmployeeService } from './employee.service';
+<div class="container">
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
-})
-export class App {
-  name = '';
-  role = '';
-  exp = '';
-  editIndex = -1;
+  <h1>CRUD Application</h1>
 
-  constructor(public employeeService: EmployeeService) {}
+  <h2>Add Employee</h2>
 
-  get items() {
-    return this.employeeService.getItems();
-  }
+  <div class="form-box">
+    <input [(ngModel)]="name" placeholder="Name">
+    <input [(ngModel)]="role" placeholder="Role">
+    <input [(ngModel)]="exp" placeholder="Experience">
 
-  add() {
-    if (this.name == '' || this.role == '' || this.exp == '') {
-      alert('Please fill all fields');
-      return;
-    }
+    <button (click)="add()">
+      {{ editIndex == -1 ? 'Add' : 'Update' }}
+    </button>
+  </div>
 
-    const data = {
-      name: this.name,
-      role: this.role,
-      exp: this.exp
-    };
+  <h2>Employee List</h2>
 
-    if (this.editIndex == -1) {
-      this.employeeService.addItem(data);
-    } else {
-      this.employeeService.updateItem(this.editIndex, data);
-      this.editIndex = -1;
-    }
+  <p *ngIf="items.length == 0">No employees added yet.</p>
 
-    this.clearFields();
-  }
+  <table *ngIf="items.length > 0">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Experience</th>
+      <th>Action</th>
+    </tr>
 
-  edit(i: number) {
-    this.name = this.items[i].name;
-    this.role = this.items[i].role;
-    this.exp = this.items[i].exp;
-    this.editIndex = i;
-  }
+    <tr *ngFor="let item of items; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.role }}</td>
+      <td>{{ item.exp }}</td>
+      <td>
+        <button class="edit-btn" (click)="edit(i)">Edit</button>
+        <button class="delete-btn" (click)="delete(i)">Delete</button>
+      </td>
+    </tr>
+  </table>
 
-  delete(i: number) {
-    if (confirm('Are you sure you want to delete this employee?')) {
-      this.employeeService.deleteItem(i);
-    }
-  }
-
-  clearFields() {
-    this.name = '';
-    this.role = '';
-    this.exp = '';
-  }
-}
+</div>
