@@ -12,23 +12,23 @@ body {
   max-width: 1280px;
   margin: auto;
   background: #ffffff;
-  padding: 34px;
-  border-radius: 20px;
-  box-shadow: 0 22px 50px rgba(0,0,0,0.22);
+  padding: 36px;
+  border-radius: 22px;
+  box-shadow: 0 24px 55px rgba(0,0,0,0.22);
 }
 
 h1 {
   margin: 0 0 30px;
   text-align: center;
-  font-size: 34px;
+  font-size: 36px;
   font-weight: 800;
   color: #111827;
   letter-spacing: 0.4px;
 }
 
 h2 {
-  margin: 26px 0 14px;
-  font-size: 21px;
+  margin: 28px 0 16px;
+  font-size: 22px;
   font-weight: 800;
   color: #111827;
 }
@@ -42,7 +42,7 @@ h2 {
 
 input,
 button {
-  height: 48px;
+  height: 50px;
   border-radius: 12px;
   font-size: 14px;
   box-sizing: border-box;
@@ -50,22 +50,23 @@ button {
 
 input {
   width: 100%;
-  padding: 0 14px;
-  border: 1px solid #cbd5e1;
+  padding: 0 15px;
+  border: 1px solid #94a3b8;
   background: #ffffff;
   color: #111827;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 input::placeholder {
-  color: #475569;
-  font-weight: 500;
+  color: #334155;
+  font-weight: 600;
 }
 
 input:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.14);
 }
 
 button {
@@ -73,11 +74,12 @@ button {
   font-weight: 700;
   color: white;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 button:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  filter: brightness(1.03);
 }
 
 .form-box button {
@@ -88,18 +90,18 @@ button:hover {
 
 .edit-btn {
   background: #f59e0b;
-  min-width: 88px;
+  min-width: 92px;
   margin-right: 8px;
 }
 
 .delete-btn {
   background: #ef4444;
-  min-width: 88px;
+  min-width: 92px;
 }
 
 table {
   width: 100%;
-  margin-top: 22px;
+  margin-top: 24px;
   border-collapse: collapse;
   overflow: hidden;
   border-radius: 14px;
@@ -108,17 +110,21 @@ table {
 th {
   background: #111827;
   color: #ffffff;
-  padding: 14px;
+  padding: 16px;
   text-align: left;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 td {
-  padding: 16px 14px;
+  padding: 18px 16px;
   border-bottom: 1px solid #e5e7eb;
-  color: #1f2937;
-  font-weight: 500;
+  color: #111827;
+  font-weight: 600;
+}
+
+tr {
+  transition: background 0.2s ease;
 }
 
 tr:hover {
@@ -126,8 +132,8 @@ tr:hover {
 }
 
 p {
-  margin-top: 16px;
-  padding: 14px;
+  margin-top: 18px;
+  padding: 15px;
   border-radius: 12px;
   background: #eff6ff;
   color: #1d4ed8;
@@ -153,6 +159,10 @@ p {
   }
 
   h1 {
-    font-size: 28px;
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 20px;
   }
 }
