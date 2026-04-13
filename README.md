@@ -2,127 +2,128 @@ app.css
 
 body {
   margin: 0;
-  padding: 45px 20px;
+  padding: 40px 20px;
   font-family: 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
   background: linear-gradient(135deg, #0f172a, #1e293b, #111827);
 }
 
 .container {
-  max-width: 1350px;
+  max-width: 1280px;
   margin: auto;
-  padding: 34px;
-  border-radius: 28px;
-  background: #f8fafc;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.22);
 }
 
 h1 {
   margin: 0 0 28px;
   text-align: center;
-  font-size: 38px;
+  font-size: 34px;
   font-weight: 800;
   color: #111827;
 }
 
 h2 {
-  margin: 28px 0 14px;
-  font-size: 22px;
+  margin: 26px 0 14px;
+  font-size: 20px;
   font-weight: 700;
-  color: #1e293b;
+  color: #1f2937;
 }
 
 .form-box {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
-  padding: 18px;
-  border-radius: 18px;
-  background: #e2e8f0;
+  align-items: stretch;
+}
+
+input,
+button {
+  height: 48px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  font-size: 14px;
 }
 
 input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 14px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  background: white;
-  font-size: 14px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  background: #ffffff;
+}
+
+input::placeholder {
+  color: #6b7280;
 }
 
 input:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
 }
 
 button {
   border: none;
-  border-radius: 12px;
-  padding: 14px 20px;
-  min-width: 115px;
-  font-size: 14px;
   font-weight: 700;
   color: white;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.2s ease;
 }
 
 button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .form-box button {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: #2563eb;
 }
 
 .edit-btn {
-  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  background: #f59e0b;
+  min-width: 90px;
   margin-right: 8px;
 }
 
 .delete-btn {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: #ef4444;
+  min-width: 90px;
 }
 
 table {
   width: 100%;
-  margin-top: 22px;
-  border-collapse: separate;
-  border-spacing: 0;
+  margin-top: 20px;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 14px;
   overflow: hidden;
-  border-radius: 18px;
-  background: white;
 }
 
 th {
-  background: linear-gradient(135deg, #111827, #374151);
+  background: #111827;
   color: white;
-  padding: 16px;
   text-align: left;
+  padding: 14px;
+  font-size: 14px;
 }
 
 td {
-  padding: 15px;
-  color: #334155;
+  padding: 16px 14px;
   border-bottom: 1px solid #e5e7eb;
+  color: #374151;
 }
 
-tr:nth-child(even) td {
-  background: #f8fafc;
-}
-
-tr:hover td {
-  background: #dbeafe;
+tr:hover {
+  background: #f9fafb;
 }
 
 p {
-  margin-top: 18px;
-  padding: 16px;
-  border-radius: 14px;
-  background: #e0f2fe;
-  color: #0369a1;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
   text-align: center;
   font-weight: 600;
 }
@@ -133,10 +134,18 @@ p {
   }
 
   h1 {
-    font-size: 30px;
+    font-size: 28px;
   }
 
-  button {
+  .form-box {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-btn,
+  .delete-btn,
+  .form-box button {
     width: 100%;
+    margin-right: 0;
+    margin-bottom: 8px;
   }
 }
