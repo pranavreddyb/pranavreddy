@@ -1,75 +1,38 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { EmployeeService } from '../../employee.service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+<div class="container">
+  <h1>CRUD Application</h1>
 
-@Component({
-  selector: 'app-employee-list',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './employee-list.html',
-  styleUrl: './employee-list.css'
-})
-export class EmployeeList {
+  <h3>Add Employee</h3>
 
-  name = '';
-  role = '';
-  exp = '';
-  editIndex = -1;
+  <div class="form-row">
+    <input type="text" placeholder="Name" [(ngModel)]="name">
+    <input type="text" placeholder="Role" [(ngModel)]="role">
+    <input type="text" placeholder="Experience" [(ngModel)]="exp">
+    <button class="add-btn" (click)="add()">
+      {{ editIndex === -1 ? 'Add' : 'Update' }}
+    </button>
+  </div>
 
-  constructor(
-    public employeeService: EmployeeService,
-    private router: Router
-  ) {}
+  <h3>Employee List</h3>
 
-  get items() {
-    return this.employeeService.getItems();
-  }
+  <table class="employee-table" *ngIf="items.length > 0">
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Experience</th>
+      <th>Action</th>
+    </tr>
 
-  add() {
-    if (!this.name || !this.role || !this.exp) {
-      alert('Please fill all fields');
-      return;
-    }
+    <tr *ngFor="let item of items; let i = index">
+      <td>{{ item.name }}</td>
+      <td>{{ item.role }}</td>
+      <td>{{ item.exp }}</td>
+      <td>
+        <button class="view-btn" (click)="viewDetails(i)">View</button>
+        <button class="edit-btn" (click)="edit(i)">Edit</button>
+        <button class="delete-btn" (click)="delete(i)">Delete</button>
+      </td>
+    </tr>
+  </table>
 
-    const data = {
-      name: this.name,
-      role: this.role,
-      exp: this.exp
-    };
-
-    if (this.editIndex === -1) {
-      this.employeeService.addItem(data);
-    } else {
-      this.employeeService.updateItem(this.editIndex, data);
-      this.editIndex = -1;
-    }
-
-    this.clearFields();
-  }
-
-  edit(i: number) {
-    const item = this.items[i];
-    this.name = item.name;
-    this.role = item.role;
-    this.exp = item.exp;
-    this.editIndex = i;
-  }
-
-  delete(i: number) {
-    if (confirm('Are you sure to delete?')) {
-      this.employeeService.deleteItem(i);
-    }
-  }
-
-  viewDetails(i: number) {
-    this.router.navigate(['/details', i]);
-  }
-
-  clearFields() {
-    this.name = '';
-    this.role = '';
-    this.exp = '';
-  }
-}
+  <p *ngIf="items.length === 0">No employees found</p>
+</div>
