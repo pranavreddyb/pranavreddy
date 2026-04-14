@@ -1,9 +1,27 @@
-<div class="details-card" *ngIf="employee">
-  <h1>Employee Details</h1>
+.details-card{
+  width:400px;
+  margin:60px auto;
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+  background:white;
+}
 
-  <p><strong>Name:</strong> {{ employee.name }}</p>
-  <p><strong>Role:</strong> {{ employee.role }}</p>
-  <p><strong>Experience:</strong> {{ employee.exp }}</p>
+h1{
+  margin-bottom:20px;
+}
 
-  <button (click)="goBack()">Back</button>
-</div>
+p{
+  font-size:18px;
+  margin:12px 0;
+}
+
+button{
+  margin-top:20px;
+  padding:10px 18px;
+  border:none;
+  background:#2563eb;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+}
