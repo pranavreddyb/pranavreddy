@@ -1,28 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EmployeeService } from '../../employee.service';
+<div class="details-card" *ngIf="employee">
+  <h1>Employee Details</h1>
 
-@Component({
-  selector: 'app-employee-details',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './employee-details.html',
-  styleUrl: './employee-details.css'
-})
-export class EmployeeDetails {
-  employee: any;
+  <p><strong>Name:</strong> {{ employee.name }}</p>
+  <p><strong>Role:</strong> {{ employee.role }}</p>
+  <p><strong>Experience:</strong> {{ employee.exp }}</p>
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private employeeService: EmployeeService
-  ) {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.employee = this.employeeService.getItems()[id];
-  }
-
-  goBack() {
-    this.router.navigate(['/employees']);
-  }
-}
+  <button (click)="goBack()">Back</button>
+</div>
