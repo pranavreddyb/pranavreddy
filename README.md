@@ -1,38 +1,63 @@
-<div class="container">
-  <h1>CRUD Application</h1>
+.container{
+  padding:30px;
+}
 
-  <h3>Add Employee</h3>
+.form-row{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
+}
 
-  <div class="form-row">
-    <input type="text" placeholder="Name" [(ngModel)]="name">
-    <input type="text" placeholder="Role" [(ngModel)]="role">
-    <input type="text" placeholder="Experience" [(ngModel)]="exp">
-    <button class="add-btn" (click)="add()">
-      {{ editIndex === -1 ? 'Add' : 'Update' }}
-    </button>
-  </div>
+input{
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  width:220px;
+}
 
-  <h3>Employee List</h3>
+button{
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+}
 
-  <table class="employee-table" *ngIf="items.length > 0">
-    <tr>
-      <th>Name</th>
-      <th>Role</th>
-      <th>Experience</th>
-      <th>Action</th>
-    </tr>
+.add-btn{
+  background:#2563eb;
+  color:white;
+}
 
-    <tr *ngFor="let item of items; let i = index">
-      <td>{{ item.name }}</td>
-      <td>{{ item.role }}</td>
-      <td>{{ item.exp }}</td>
-      <td>
-        <button class="view-btn" (click)="viewDetails(i)">View</button>
-        <button class="edit-btn" (click)="edit(i)">Edit</button>
-        <button class="delete-btn" (click)="delete(i)">Delete</button>
-      </td>
-    </tr>
-  </table>
+.view-btn{
+  background:#10b981;
+  color:white;
+  margin-right:6px;
+}
 
-  <p *ngIf="items.length === 0">No employees found</p>
-</div>
+.edit-btn{
+  background:#f59e0b;
+  color:white;
+  margin-right:6px;
+}
+
+.delete-btn{
+  background:#ef4444;
+  color:white;
+}
+
+.employee-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+.employee-table th,
+.employee-table td{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+
+.employee-table th{
+  background:#1f2937;
+  color:white;
+}
