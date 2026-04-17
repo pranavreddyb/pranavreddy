@@ -1,221 +1,85 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+<div class="container">
 
-:host{
-  display:block;
-  min-height:100vh;
-  font-family:Inter, Arial, sans-serif;
-  background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
-  padding:24px;
-}
+  <div class="header">
+    <h1>CRUD Application</h1>
+    <p>Premium Employee Management Dashboard</p>
+  </div>
 
-.container{
-  max-width:1400px;
-  margin:auto;
-  background:#f8fafc;
-  border-radius:28px;
-  overflow:hidden;
-  box-shadow:0 30px 80px rgba(0,0,0,0.35);
-}
+  <div class="dashboard">
 
-/* HEADER */
-.header{
-  background:linear-gradient(135deg,#2563eb,#1d4ed8);
-  color:white;
-  padding:28px 32px;
-}
+    <div class="sidebar">
+      <h3>Menu</h3>
+      <div class="menu-item active">Employees</div>
+      <div class="menu-item">Analytics</div>
+      <div class="menu-item">Settings</div>
+    </div>
 
-.header h1{
-  font-size:42px;
-  font-weight:800;
-  letter-spacing:-1px;
-}
+    <div class="main-content">
 
-.header p{
-  margin-top:8px;
-  opacity:0.9;
-  font-size:15px;
-}
+      <div class="stats">
+        <div class="stat-card">
+          <span>Total Employees</span>
+          <h2>{{ items.length }}</h2>
+        </div>
 
-/* BODY */
-.dashboard{
-  display:grid;
-  grid-template-columns:260px 1fr;
-  min-height:80vh;
-}
+        <div class="stat-card">
+          <span>Departments</span>
+          <h2>{{ getDepartmentCount() }}</h2>
+        </div>
+      </div>
 
-/* SIDEBAR */
-.sidebar{
-  background:#0f172a;
-  color:#cbd5e1;
-  padding:24px;
-}
+      <div class="form-box">
+        <h3>Add Employee</h3>
 
-.sidebar h3{
-  color:#fff;
-  margin-bottom:20px;
-  font-size:20px;
-}
+        <div class="form-row">
+          <input type="text" placeholder="Name" [(ngModel)]="name">
+          <input type="text" placeholder="Role" [(ngModel)]="role">
+          <input type="text" placeholder="Experience" [(ngModel)]="exp">
+          <input type="text" placeholder="Email" [(ngModel)]="email">
+          <input type="text" placeholder="Department" [(ngModel)]="department">
+          <input type="text" placeholder="Location" [(ngModel)]="location">
 
-.menu-item{
-  padding:12px 14px;
-  border-radius:12px;
-  margin-bottom:10px;
-  background:rgba(255,255,255,0.04);
-}
+          <button class="add-btn" (click)="add()">
+            {{ editIndex === -1 ? 'Add' : 'Update' }}
+          </button>
+        </div>
+      </div>
 
-.menu-item.active{
-  background:#2563eb;
-  color:#fff;
-}
+      <div class="table-box">
+        <h3>Employee List</h3>
 
-/* MAIN */
-.main-content{
-  padding:28px;
-}
+        <table class="employee-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Experience</th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Location</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-/* STATS */
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:16px;
-  margin-bottom:24px;
-}
+          <tbody>
+            <tr *ngFor="let item of items; let i = index">
+              <td>{{ item.name }}</td>
+              <td>{{ item.role }}</td>
+              <td>{{ item.exp }}</td>
+              <td>{{ item.email }}</td>
+              <td>{{ item.department }}</td>
+              <td>{{ item.location }}</td>
+              <td>
+                <button class="view-btn" (click)="viewDetails(i)">View</button>
+                <button class="edit-btn" (click)="edit(i)">Edit</button>
+                <button class="delete-btn" (click)="delete(i)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-.stat-card{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 10px 24px rgba(15,23,42,0.08);
-}
+      </div>
 
-.stat-card span{
-  color:#64748b;
-  font-size:13px;
-}
-
-.stat-card h2{
-  margin-top:8px;
-  font-size:30px;
-  color:#0f172a;
-}
-
-/* FORM */
-.form-box{
-  background:#fff;
-  border-radius:20px;
-  padding:22px;
-  margin-bottom:24px;
-  box-shadow:0 10px 24px rgba(15,23,42,0.06);
-}
-
-.form-box h3{
-  margin-bottom:16px;
-  color:#0f172a;
-}
-
-.form-row{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:14px;
-}
-
-input{
-  padding:14px;
-  border:1px solid #dbe2ea;
-  border-radius:12px;
-  background:#f8fafc;
-  outline:none;
-}
-
-input:focus{
-  border-color:#2563eb;
-  background:#fff;
-  box-shadow:0 0 0 4px rgba(37,99,235,0.12);
-}
-
-/* BUTTONS */
-button{
-  border:none;
-  border-radius:12px;
-  padding:12px 18px;
-  font-weight:700;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-button:hover{
-  transform:translateY(-2px);
-}
-
-.add-btn{
-  background:linear-gradient(135deg,#2563eb,#1d4ed8);
-  color:#fff;
-}
-
-.view-btn{
-  background:#10b981;
-  color:#fff;
-}
-
-.edit-btn{
-  background:#f59e0b;
-  color:#fff;
-}
-
-.delete-btn{
-  background:#ef4444;
-  color:#fff;
-}
-
-/* TABLE */
-.table-box{
-  background:#fff;
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 10px 24px rgba(15,23,42,0.06);
-}
-
-.table-box h3{
-  margin-bottom:16px;
-  color:#0f172a;
-}
-
-.employee-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.employee-table th{
-  background:#0f172a;
-  color:#fff;
-  padding:14px;
-  text-align:left;
-}
-
-.employee-table td{
-  padding:14px;
-  border-bottom:1px solid #eef2f7;
-}
-
-.employee-table tr:hover{
-  background:#f8fafc;
-}
-
-/* MOBILE */
-@media(max-width:900px){
-  .dashboard{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    display:none;
-  }
-
-  .header h1{
-    font-size:32px;
-  }
-}
+    </div>
+  </div>
+</div>
