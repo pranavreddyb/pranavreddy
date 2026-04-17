@@ -7,6 +7,7 @@
 
   <div class="dashboard">
 
+    <!-- Sidebar -->
     <div class="sidebar">
       <h3>Menu</h3>
       <div class="menu-item active">Employees</div>
@@ -14,8 +15,10 @@
       <div class="menu-item">Settings</div>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
 
+      <!-- Stats -->
       <div class="stats">
         <div class="stat-card">
           <span>Total Employees</span>
@@ -28,8 +31,9 @@
         </div>
       </div>
 
+      <!-- Form -->
       <div class="form-box">
-        <h3>Add Employee</h3>
+        <h3>{{ editIndex === -1 ? 'Add Employee' : 'Update Employee' }}</h3>
 
         <div class="form-row">
           <input type="text" placeholder="Name" [(ngModel)]="name">
@@ -40,11 +44,12 @@
           <input type="text" placeholder="Location" [(ngModel)]="location">
 
           <button class="add-btn" (click)="add()">
-            {{ editIndex === -1 ? 'Add' : 'Update' }}
+            {{ editIndex === -1 ? 'Add Employee' : 'Update Employee' }}
           </button>
         </div>
       </div>
 
+      <!-- Table -->
       <div class="table-box">
         <h3>Employee List</h3>
 
@@ -78,6 +83,7 @@
           </tbody>
         </table>
 
+        <p *ngIf="items.length === 0">No employees added yet.</p>
       </div>
 
     </div>
