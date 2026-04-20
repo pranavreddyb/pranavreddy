@@ -1,28 +1,23 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+<div class="overlay" *ngIf="show">
+  <div class="modal-box">
 
-@Component({
-  selector: 'app-modal',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './modal.html',
-  styleUrl: './modal.css'
-})
-export class Modal {
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
 
-  @Input() show = false;
-  @Input() title = '';
-  @Input() message = '';
-  @Input() type = 'alert';
+    <div class="buttons">
 
-  @Output() close = new EventEmitter<void>();
-  @Output() confirmAction = new EventEmitter<void>();
+      <button class="cancel-btn" (click)="closeModal()">
+        {{ type === 'confirm' ? 'Cancel' : 'OK' }}
+      </button>
 
-  closeModal() {
-    this.close.emit();
-  }
+      <button
+        *ngIf="type === 'confirm'"
+        class="confirm-btn"
+        (click)="confirm()">
+        Confirm
+      </button>
 
-  confirm() {
-    this.confirmAction.emit();
-  }
-}
+    </div>
+
+  </div>
+</div>
