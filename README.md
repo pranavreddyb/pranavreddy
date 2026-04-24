@@ -11,10 +11,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+employees = []
+
 @app.get("/")
 def home():
     return {"message": "FastAPI is running"}
 
 @app.get("/employees")
 def get_employees():
-    return []
+    return employees
+
+@app.post("/employees")
+def add_employee(employee: dict):
+    employees.append(employee)
+    return {"message": "Employee added"}
