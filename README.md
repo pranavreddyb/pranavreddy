@@ -1,62 +1,68 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from services.mock_data import get_mock_data
 
-st.set_page_config(page_title="Analytics", layout="wide")
+st.set_page_config(page_title="Test Harness", layout="wide")
 
-st.title("📈 Analytics Dashboard")
-st.caption("Insights from tax filing records")
+st.title("🧪 Test Harness")
+st.caption("Search scenario validation")
 
 # Load data
 data = get_mock_data()
 df = pd.DataFrame(data)
 
-# -----------------------------
-# Chart 1: Records by State
-# -----------------------------
-state_counts = df["State"].value_counts().reset_index()
-state_counts.columns = ["State", "Count"]
+# -----------------------------------
+# Test Cases
+# -----------------------------------
+tests = [
+    {
+        "Test ID": "BASIC-001",
+        "Scenario": "Search Susan",
+        "Expected": "1 result",
+        "Actual": len(df[df["ClientName"].str.contains("Susan", case=False)]),
+    },
+    {
+        "Test ID": "FILTER-001",
+        "Scenario": "State = Florida",
+        "Expected": "1 result",
+        "Actual": len(df[df["State"] == "Florida"]),
+    },
+    {
+        "Test ID": "FORM-001",
+        "Scenario": "Form = W-2",
+        "Expected": "1 result",
+        "Actual": len(df[df["FormType"] == "W-2"]),
+    },
+    {
+        "Test ID": "HIGHWAGE-001",
+        "Scenario": "Wages > 100000",
+        "Expected": "1 result",
+        "Actual": len(df[df["Wages"] > 100000]),
+    },
+]
 
-fig1 = px.bar(
-    state_counts,
-    x="State",
-    y="Count",
-    title="Records by State"
-)
+results = []
 
-# -----------------------------
-# Chart 2: Records by Form Type
-# -----------------------------
-form_counts = df["FormType"].value_counts().reset_index()
-form_counts.columns = ["FormType", "Count"]
+for test in tests:
+    status = "PASS" if test["Actual"] >= 1 else "FAIL"
+    results.append({
+        "Test ID": test["Test ID"],
+        "Scenario": test["Scenario"],
+        "Expected": test["Expected"],
+        "Actual": test["Actual"],
+        "Status": status
+    })
 
-fig2 = px.pie(
-    form_counts,
-    names="FormType",
-    values="Count",
-    title="Form Type Distribution"
-)
+result_df = pd.DataFrame(results)
 
-# -----------------------------
-# Chart 3: Wages by Client
-# -----------------------------
-fig3 = px.bar(
-    df,
-    x="ClientName",
-    y="Wages",
-    title="Wages by Client"
-)
+# -----------------------------------
+# Output
+# -----------------------------------
+st.dataframe(result_df, use_container_width=True, hide_index=True)
 
-# -----------------------------
-# Layout
-# -----------------------------
+pass_count = len(result_df[result_df["Status"] == "PASS"])
+fail_count = len(result_df[result_df["Status"] == "FAIL"])
+
 col1, col2 = st.columns(2)
-
-with col1:
-    st.plotly_chart(fig1, use_container_width=True)
-
-with col2:
-    st.plotly_chart(fig2, use_container_width=True)
-
-st.plotly_chart(fig3, use_container_width=True)
+col1.metric("Passed", pass_count)
+col2.metric("Failed", fail_count)
