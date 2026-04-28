@@ -1,36 +1,23 @@
-def get_mock_data():
-    return [
-        {
-            "ClientName": "Susan Thomas",
-            "EmployerName": "TechStart Inc",
-            "FormType": "1099-NEC",
-            "TaxYear": 2022,
-            "State": "Florida",
-            "Wages": 97937.42,
-            "SSN": "655-72-2057",
-            "AmendedReturns": 11,
-            "Flags": "High Amendments"
-        },
-        {
-            "ClientName": "John Smith",
-            "EmployerName": "Acme Corp",
-            "FormType": "W-2",
-            "TaxYear": 2021,
-            "State": "California",
-            "Wages": 120000,
-            "SSN": "N/A",
-            "AmendedReturns": 0,
-            "Flags": "Missing SSN, High Wage"
-        },
-        {
-            "ClientName": "Maria Lee",
-            "EmployerName": "N/A",
-            "FormType": "1099-MISC",
-            "TaxYear": 2022,
-            "State": "Texas",
-            "Wages": 65000,
-            "SSN": "111-22-3333",
-            "AmendedReturns": 2,
-            "Flags": "Missing Employer"
-        }
-    ]
+import streamlit as st
+
+def render_filters(df):
+    years = ["All"] + sorted(df["TaxYear"].astype(str).unique().tolist())
+    forms = ["All"] + sorted(df["FormType"].unique().tolist())
+    states = ["All"] + sorted(df["State"].unique().tolist())
+    flags = ["All"] + sorted(df["Flags"].unique().tolist())
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        year = st.selectbox("Year", years)
+
+    with col2:
+        form = st.selectbox("Form", forms)
+
+    with col3:
+        state = st.selectbox("State", states)
+
+    with col4:
+        flag = st.selectbox("Flags", flags)
+
+    return year, form, state, flag
