@@ -1,55 +1,115 @@
-.stApp {
-    background: #f8fafc;
-    padding: 20px;
-}
+import streamlit as st
+import pandas as pd
+from services.mock_data import get_mock_data
 
-.main .block-container {
-    padding-top: 1rem;
-    padding-bottom: 2rem;
-    max-width: 1200px;
-}
+# ---------------- Page Config ----------------
+st.set_page_config(
+    page_title="Tax Search Dashboard",
+    page_icon="📊",
+    layout="wide"
+)
 
-h1 {
-    font-size: 42px !important;
-    font-weight: 700 !important;
-    color: #111827 !important;
-    margin-bottom: 0.2rem !important;
-}
+# ---------------- Load CSS ----------------
+with open("assets/style.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-h2, h3 {
-    color: #1f2937 !important;
-}
+# ---------------- Load Data ----------------
+df = pd.DataFrame(get_mock_data())
 
-[data-testid="stMetric"] {
-    background: white;
-    border-radius: 14px;
-    padding: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    border: 1px solid #e5e7eb;
-}
+# ---------------- Header ----------------
+st.title("📊 Tax Search Dashboard")
+st.caption("Smart search for tax filing records")
 
-.stTextInput input,
-.stSelectbox div[data-baseweb="select"] {
-    border-radius: 10px !important;
-}
+# ---------------- Search ----------------
+query = st.text_input(
+    "Search by client, employer, state, or phrase"
+)
 
-.stButton button,
-.stDownloadButton button {
-    border-radius: 10px !important;
-    padding: 0.5rem 1rem !important;
-    border: none !important;
-    background: #2563eb !important;
-    color: white !important;
-    font-weight: 600 !important;
-}
+# ---------------- Filters ----------------
+col1, col2, col3, col4 = st.columns(4)
 
-.stButton button:hover,
-.stDownloadButton button:hover {
-    background: #1d4ed8 !important;
-}
+with col1:
+    year = st.selectbox(
+        "Year",
+        ["All"] + sorted(df["TaxYear"].astype(str).unique().tolist())
+    )
 
-[data-testid="stDataFrame"] {
-    background: white;
-    border-radius: 12px;
-    padding: 10px;
-}
+with col2:
+    form = st.selectbox(
+        "Form",
+        ["All"] + sorted(df["FormType"].unique().tolist())
+    )
+
+with col3:
+    state = st.selectbox(
+        "State",
+        ["All"] + sorted(df["State"].unique().tolist())
+    )
+
+with col4:
+    flag = st.selectbox(
+        "Flags",
+        ["All", "High Wage", "Missing SSN", "Missing Employer"]
+    )
+
+# ---------------- Search Logic ----------------
+filtered = df.copy()
+
+# Text Search
+if query:
+    q = query.lower()
+    filtered = filtered[
+        filtered.astype(str)
+        .apply(lambda row: row.str.lower().str.contains(q).any(), axis=1)
+    ]
+
+# Year
+if year != "All":
+    filtered = filtered[filtered["TaxYear"].astype(str) == year]
+
+# Form
+if form != "All":
+    filtered = filtered[filtered["FormType"] == form]
+
+# State
+if state != "All":
+    filtered = filtered[filtered["State"] == state]
+
+# Flags
+if flag == "High Wage":
+    filtered = filtered[filtered["Wages"] > 90000]
+
+elif flag == "Missing SSN":
+    filtered = filtered[
+        (filtered["SSN"] == "") |
+        (filtered["SSN"] == "N/A")
+    ]
+
+elif flag == "Missing Employer":
+    filtered = filtered[
+        (filtered["EmployerName"] == "") |
+        (filtered["EmployerName"] == "N/A")
+    ]
+
+# ---------------- Metrics ----------------
+m1, m2, m3, m4 = st.columns(4)
+
+m1.metric("Total Records", len(filtered))
+m2.metric("High Wage", len(filtered[filtered["Wages"] > 90000]))
+m3.metric("Missing SSN", len(filtered[
+    (filtered["SSN"] == "") | (filtered["SSN"] == "N/A")
+]))
+m4.metric("States Covered", filtered["State"].nunique())
+
+# ---------------- Results ----------------
+st.subheader(f"Results: {len(filtered)}")
+
+csv = filtered.to_csv(index=False).encode("utf-8")
+st.download_button(
+    "📥 Download Results CSV",
+    data=csv,
+    file_name="results.csv",
+    mime="text/csv"
+)
+
+st.dataframe(filtered, use_container_width=True)
