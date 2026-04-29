@@ -1,46 +1,61 @@
-import streamlit as st
-
-from pages.dashboard import show_dashboard
-from pages.analytics import show_analytics
-from pages.test_harness import show_test_harness
-
-# ---------------- Page Config ----------------
-st.set_page_config(
-    page_title="Tax Search Dashboard",
-    page_icon="📊",
-    layout="wide"
-)
-
-# ---------------- Hide Default Streamlit Pages Nav ----------------
-st.markdown("""
-<style>
-[data-testid="stSidebarNav"] {
-    display: none;
+/* App background */
+.stApp {
+    background: #f8fafc;
+    color: #111827;
+    font-family: 'Segoe UI', sans-serif;
 }
-</style>
-""", unsafe_allow_html=True)
 
-# ---------------- Load Custom CSS ----------------
-try:
-    with open("assets/style.css") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-except:
-    pass
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    width: 260px !important;
+    background: #111827;
+    color: white;
+}
 
-# ---------------- Sidebar Navigation ----------------
-st.sidebar.title("Navigation")
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
 
-page = st.sidebar.radio(
-    "Go to",
-    ["Dashboard", "Analytics", "Test Harness"]
-)
+/* Title spacing */
+h1 {
+    font-size: 42px !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.3rem !important;
+}
 
-# ---------------- Route Pages ----------------
-if page == "Dashboard":
-    show_dashboard()
+/* Inputs */
+input, .stSelectbox div[data-baseweb="select"] {
+    border-radius: 12px !important;
+}
 
-elif page == "Analytics":
-    show_analytics()
+/* Metric cards */
+[data-testid="metric-container"] {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
 
-elif page == "Test Harness":
-    show_test_harness()
+/* Buttons */
+.stButton button, .stDownloadButton button {
+    background: linear-gradient(90deg,#2563eb,#1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+}
+
+/* Dataframe */
+[data-testid="stDataFrame"] {
+    background: white;
+    border-radius: 14px;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Reduce top padding */
+.block-container {
+    padding-top: 2rem;
+}
