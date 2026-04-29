@@ -1,18 +1,31 @@
 st.markdown("""
 <div style='
-padding:22px;
-border-radius:18px;
-background:linear-gradient(135deg,#0f172a,#1e293b);
-color:#ffffff;
-margin-bottom:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
+padding:28px;
+border-radius:20px;
+margin-bottom:24px;
+background:linear-gradient(135deg,#eef2ff,#dbeafe,#f0f9ff);
+border:1px solid #dbeafe;
+box-shadow:0 8px 24px rgba(59,130,246,0.08);
 '>
-<h2 style='margin:0;font-size:30px;color:#ffffff;'>
-AI Tax Intelligence Dashboard
+
+<h2 style='
+margin:0;
+font-size:34px;
+font-weight:800;
+color:#111827;
+letter-spacing:-0.5px;
+'>
+🚀 AI Tax Intelligence Dashboard
 </h2>
 
-<p style='margin-top:8px;font-size:15px;color:#e2e8f0;font-weight:500;'>
-Smart search • Risk flags • Filing insights • Faster audits
+<p style='
+margin-top:10px;
+font-size:16px;
+color:#475569;
+font-weight:500;
+'>
+Smart Search • Risk Detection • Filing Insights • Faster Audits
 </p>
+
 </div>
 """, unsafe_allow_html=True)
