@@ -1,41 +1,46 @@
 import streamlit as st
-import pandas as pd
-from services.mock_data import get_mock_data
 
-def show_test_harness():
-    st.title("🧪 Test Harness")
-    st.caption("Search scenario validation")
+from pages.dashboard import show_dashboard
+from pages.analytics import show_analytics
+from pages.test_harness import show_test_harness
 
-    df = pd.DataFrame(get_mock_data())
+# ---------------- Page Config ----------------
+st.set_page_config(
+    page_title="Tax Search Dashboard",
+    page_icon="📊",
+    layout="wide"
+)
 
-    tests = []
+# ---------------- Hide Default Streamlit Pages Nav ----------------
+st.markdown("""
+<style>
+[data-testid="stSidebarNav"] {
+    display: none;
+}
+</style>
+""", unsafe_allow_html=True)
 
-    tests.append({
-        "Test ID": "BASIC-001",
-        "Scenario": "Search Susan",
-        "Expected": "1 result",
-        "Actual": len(df[df["ClientName"].str.contains("Susan", case=False)]),
-    })
+# ---------------- Load Custom CSS ----------------
+try:
+    with open("assets/style.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+except:
+    pass
 
-    tests.append({
-        "Test ID": "FILTER-001",
-        "Scenario": "State = Florida",
-        "Expected": "1 result",
-        "Actual": len(df[df["State"] == "Florida"]),
-    })
+# ---------------- Sidebar Navigation ----------------
+st.sidebar.title("Navigation")
 
-    tests.append({
-        "Test ID": "FLAG-001",
-        "Scenario": "Missing Employer",
-        "Expected": "1 result",
-        "Actual": len(df[df["EmployerName"] == ""]),
-    })
+page = st.sidebar.radio(
+    "Go to",
+    ["Dashboard", "Analytics", "Test Harness"]
+)
 
-    result_df = pd.DataFrame(tests)
+# ---------------- Route Pages ----------------
+if page == "Dashboard":
+    show_dashboard()
 
-    result_df["Status"] = result_df.apply(
-        lambda row: "PASS" if str(row["Actual"]).startswith("1") else "CHECK",
-        axis=1
-    )
+elif page == "Analytics":
+    show_analytics()
 
-    st.dataframe(result_df, use_container_width=True)
+elif page == "Test Harness":
+    show_test_harness()
