@@ -1,31 +1,46 @@
-st.markdown("""
-<div style='
-padding:28px;
-border-radius:20px;
-margin-bottom:24px;
-background:linear-gradient(135deg,#eef2ff,#dbeafe,#f0f9ff);
-border:1px solid #dbeafe;
-box-shadow:0 8px 24px rgba(59,130,246,0.08);
-'>
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-<h2 style='
-margin:0;
-font-size:34px;
-font-weight:800;
-color:#111827;
-letter-spacing:-0.5px;
-'>
-🚀 AI Tax Intelligence Dashboard
-</h2>
+app = FastAPI()
 
-<p style='
-margin-top:10px;
-font-size:16px;
-color:#475569;
-font-weight:500;
-'>
-Smart Search • Risk Detection • Filing Insights • Faster Audits
-</p>
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-</div>
-""", unsafe_allow_html=True)
+employees = []
+
+# Home
+@app.get("/")
+def home():
+    return {"message": "FastAPI is running"}
+
+# GET all employees
+@app.get("/employees")
+def get_employees():
+    return employees
+
+# ADD employee
+@app.post("/employees")
+def add_employee(employee: dict):
+    employees.append(employee)
+    return {"message": "Employee added"}
+
+# UPDATE employee
+@app.put("/employees/{id}")
+def update_employee(id: int, employee: dict):
+    if id < len(employees):
+        employees[id] = employee
+        return {"message": "Employee updated"}
+    return {"error": "Invalid ID"}
+
+# DELETE employee
+@app.delete("/employees/{id}")
+def delete_employee(id: int):
+    if id < len(employees):
+        employees.pop(id)
+        return {"message": "Employee deleted"}
+    return {"error": "Invalid ID"}
