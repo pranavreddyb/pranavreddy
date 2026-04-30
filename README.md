@@ -10,14 +10,20 @@ export class EmployeeList implements OnInit {
 
   items: any[] = [];
 
-  name = '';
-  role = '';
-  exp = '';
-  email = '';
-  department = '';
-  location = '';
+  // form fields
+  name: string = '';
+  role: string = '';
+  exp: string = '';
+  email: string = '';
+  department: string = '';
+  location: string = '';
 
-  editIndex = -1;
+  // edit
+  editIndex: number = -1;
+
+  // modal
+  showModal: boolean = false;
+  deleteIndex: number = -1;
 
   constructor(private employeeService: EmployeeService) {}
 
@@ -25,17 +31,17 @@ export class EmployeeList implements OnInit {
     this.loadEmployees();
   }
 
-  // LOAD
+  // 🔹 LOAD EMPLOYEES
   loadEmployees() {
     this.employeeService.getEmployees().subscribe(data => {
       this.items = data;
     });
   }
 
-  // ADD or UPDATE
+  // 🔹 ADD OR UPDATE
   save() {
     if (!this.name || !this.role || !this.exp || !this.email) {
-      alert("Fill required fields");
+      alert("Please fill required fields");
       return;
     }
 
@@ -63,7 +69,7 @@ export class EmployeeList implements OnInit {
     }
   }
 
-  // EDIT
+  // 🔹 EDIT
   edit(i: number) {
     const item = this.items[i];
 
@@ -77,16 +83,30 @@ export class EmployeeList implements OnInit {
     this.editIndex = i;
   }
 
-  // DELETE
+  // 🔹 DELETE (open modal)
   delete(i: number) {
-    if (confirm("Delete employee?")) {
-      this.employeeService.deleteEmployee(i).subscribe(() => {
+    this.deleteIndex = i;
+    this.showModal = true;
+  }
+
+  // 🔹 CONFIRM DELETE
+  confirmDelete() {
+    if (this.deleteIndex !== -1) {
+      this.employeeService.deleteEmployee(this.deleteIndex).subscribe(() => {
         this.loadEmployees();
+        this.showModal = false;
+        this.deleteIndex = -1;
       });
     }
   }
 
-  // CLEAR FORM
+  // 🔹 CLOSE MODAL
+  closeModal() {
+    this.showModal = false;
+    this.deleteIndex = -1;
+  }
+
+  // 🔹 CLEAR FORM
   clear() {
     this.name = '';
     this.role = '';
