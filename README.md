@@ -1,26 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { EmployeeService } from '../../employee.service';
 import { Modal } from '../modal/modal';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, Modal],
+  imports: [CommonModule, FormsModule, Modal],
   templateUrl: './employee-list.html',
-  styleUrl: './employee-list.css'
+  styleUrls: ['./employee-list.css']
 })
 export class EmployeeList implements OnInit {
 
   items: any[] = [];
 
-  // modal variables
-  showModal: boolean = false;
-  modalTitle: string = '';
-  modalMessage: string = '';
-  modalType: string = 'alert';
+  // form
+  name = '';
+  role = '';
+  exp = '';
+  email = '';
+  department = '';
+  location = '';
 
-  deleteIndex: number = -1;
+  editIndex = -1;
+
+  // modal
+  showModal = false;
+  modalTitle = '';
+  modalMessage = '';
+  modalType = '';
+  deleteIndex = -1;
 
   constructor(private employeeService: EmployeeService) {}
 
@@ -29,43 +39,58 @@ export class EmployeeList implements OnInit {
   }
 
   loadEmployees() {
-    this.employeeService.getEmployees().subscribe((data: any) => {
+    this.employeeService.getEmployees().subscribe(data => {
       this.items = data;
     });
   }
 
-  // ✅ VIEW DETAILS
-  viewDetails(index: number) {
-    const item = this.items[index];
+  save() {
+    if (!this.name || !this.role || !this.exp || !this.email) {
+      alert('Fill required fields');
+      return;
+    }
 
-    this.modalTitle = 'Employee Details';
-    this.modalMessage =
-      'Name: ' + item.name + '\n' +
-      'Role: ' + item.role + '\n' +
-      'Email: ' + item.email + '\n' +
-      'Department: ' + item.department + '\n' +
-      'Location: ' + item.location;
+    const data = {
+      name: this.name,
+      role: this.role,
+      exp: this.exp,
+      email: this.email,
+      department: this.department,
+      location: this.location
+    };
 
-    this.modalType = 'alert';
-    this.showModal = true;
+    if (this.editIndex === -1) {
+      this.employeeService.addEmployee(data).subscribe(() => {
+        this.loadEmployees();
+        this.clear();
+      });
+    } else {
+      this.employeeService.updateEmployee(this.editIndex, data).subscribe(() => {
+        this.loadEmployees();
+        this.clear();
+      });
+    }
   }
 
-  // ✅ EDIT (basic placeholder)
-  edit(index: number) {
-    alert('Edit clicked for: ' + this.items[index].name);
+  edit(i: number) {
+    const item = this.items[i];
+    this.name = item.name;
+    this.role = item.role;
+    this.exp = item.exp;
+    this.email = item.email;
+    this.department = item.department;
+    this.location = item.location;
+    this.editIndex = i;
   }
 
-  // ✅ DELETE CLICK
-  delete(index: number) {
-    this.deleteIndex = index;
-
+  delete(i: number) {
+    this.deleteIndex = i;
     this.modalTitle = 'Delete Employee';
-    this.modalMessage = 'Are you sure you want to delete this employee?';
+    this.modalMessage = 'Are you sure?';
     this.modalType = 'confirm';
     this.showModal = true;
   }
 
-  // ✅ CONFIRM DELETE
   confirmDelete() {
     this.employeeService.deleteEmployee(this.deleteIndex).subscribe(() => {
       this.loadEmployees();
@@ -73,4 +98,25 @@ export class EmployeeList implements OnInit {
     });
   }
 
+  closeModal() {
+    this.showModal = false;
+  }
+
+  clear() {
+    this.name = '';
+    this.role = '';
+    this.exp = '';
+    this.email = '';
+    this.department = '';
+    this.location = '';
+    this.editIndex = -1;
+  }
+
+  viewDetails(i: number) {
+    const item = this.items[i];
+    this.modalTitle = item.name;
+    this.modalMessage = `${item.role} - ${item.email}`;
+    this.modalType = 'alert';
+    this.showModal = true;
+  }
 }
