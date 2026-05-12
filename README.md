@@ -1,41 +1,43 @@
-<mat-card class="chat-container">
-  <!-- Messages Area -->
-  <div class="messages">
-    <div
-      *ngFor="let message of messages"
-      class="message"
-      [class.user]="message.sender === 'user'"
-      [class.ai]="message.sender === 'ai'"
-    >
-      <strong>{{ message.sender === 'user' ? 'You' : 'AI' }}:</strong>
-      {{ message.text }}
-    </div>
+.chat-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 16px;
+}
 
-    <!-- Loading Spinner -->
-    <div class="loading" *ngIf="loading">
-      <mat-spinner diameter="30"></mat-spinner>
-    </div>
-  </div>
+.messages {
+  min-height: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
 
-  <!-- Input Area -->
-  <div class="input-area">
-    <mat-form-field appearance="outline" class="input-field">
-      <textarea
-        matInput
-        rows="2"
-        [(ngModel)]="userInput"
-        placeholder="Type your message..."
-        (keydown.enter)="sendMessage(); $event.preventDefault()"
-      ></textarea>
-    </mat-form-field>
+.message {
+  padding: 10px 14px;
+  margin: 8px 0;
+  border-radius: 8px;
+}
 
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="sendMessage()"
-      [disabled]="loading"
-    >
-      Send
-    </button>
-  </div>
-</mat-card>
+.message.user {
+  background: #e3f2fd;
+  text-align: right;
+}
+
+.message.ai {
+  background: #f5f5f5;
+}
+
+.input-area {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.input-field {
+  flex: 1;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
