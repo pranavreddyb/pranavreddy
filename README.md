@@ -1,46 +1,41 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+<mat-card class="chat-container">
+  <!-- Messages Area -->
+  <div class="messages">
+    <div
+      *ngFor="let message of messages"
+      class="message"
+      [class.user]="message.sender === 'user'"
+      [class.ai]="message.sender === 'ai'"
+    >
+      <strong>{{ message.sender === 'user' ? 'You' : 'AI' }}:</strong>
+      {{ message.text }}
+    </div>
 
-export interface ChatMessage {
-  sender: 'user' | 'ai';
-  text: string;
-}
+    <!-- Loading Spinner -->
+    <div class="loading" *ngIf="loading">
+      <mat-spinner diameter="30"></mat-spinner>
+    </div>
+  </div>
 
-@Component({
-  selector: 'app-chat',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatInputModule,
-    MatProgressSpinnerModule
-  ],
-  templateUrl: './chat.html',
-  styleUrl: './chat.css'
-})
-export class Chat {
-  @Input() messages: ChatMessage[] = [];
-  @Input() loading = false;
+  <!-- Input Area -->
+  <div class="input-area">
+    <mat-form-field appearance="outline" class="input-field">
+      <textarea
+        matInput
+        rows="2"
+        [(ngModel)]="userInput"
+        placeholder="Type your message..."
+        (keydown.enter)="sendMessage(); $event.preventDefault()"
+      ></textarea>
+    </mat-form-field>
 
-  @Output() messageSent = new EventEmitter<string>();
-
-  userInput = '';
-
-  sendMessage(): void {
-    const text = this.userInput.trim();
-
-    if (!text) {
-      return;
-    }
-
-    this.messageSent.emit(text);
-    this.userInput = '';
-  }
-}
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="sendMessage()"
+      [disabled]="loading"
+    >
+      Send
+    </button>
+  </div>
+</mat-card>
