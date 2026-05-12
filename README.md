@@ -1,28 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Routes } from '@angular/router';
+import { PlanningComponent } from './pages/planning/planning.component';
+import { RoleplayComponent } from './pages/roleplay/roleplay.component';
+import { DebriefComponent } from './pages/debrief/debrief.component';
 
-@Component({
-  selector: 'app-modal',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './modal.html',
-  styleUrls: ['./modal.css']
-})
-export class Modal {
-
-  @Input() show: boolean = false;
-  @Input() title: string = '';
-  @Input() message: string = '';
-  @Input() type: string = '';
-
-  @Output() close = new EventEmitter<void>();
-  @Output() confirmAction = new EventEmitter<void>();
-
-  closeModal() {
-    this.close.emit();
-  }
-
-  confirm() {
-    this.confirmAction.emit();
-  }
-}
+export const routes: Routes = [
+  { path: '', redirectTo: 'plan', pathMatch: 'full' },
+  { path: 'plan', component: PlanningComponent },
+  { path: 'roleplay', component: RoleplayComponent },
+  { path: 'debrief', component: DebriefComponent }
+];
