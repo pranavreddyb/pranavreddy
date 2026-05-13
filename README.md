@@ -1,43 +1,38 @@
-.chat-container {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 16px;
-}
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-.messages {
-  min-height: 400px;
-  max-height: 500px;
-  overflow-y: auto;
-  margin-bottom: 16px;
-}
+@Injectable({
+  providedIn: 'root'
+})
+export class CoachingApi {
+  // Get Angular's HttpClient using the inject() function
+  private http = inject(HttpClient);
 
-.message {
-  padding: 10px 14px;
-  margin: 8px 0;
-  border-radius: 8px;
-}
+  // Base URL of the backend server
+  private baseUrl = 'http://localhost:8000';
 
-.message.user {
-  background: #e3f2fd;
-  text-align: right;
-}
+  // Create a new coaching session
+  createSession() {
+    return this.http.post<{ session_id: string }>(
+      `${this.baseUrl}/sessions`,
+      {}
+    );
+  }
 
-.message.ai {
-  background: #f5f5f5;
-}
+  // Send a user message to the backend
+  sendMessage(sessionId: string, message: string) {
+    return this.http.post<{ response: string }>(
+      `${this.baseUrl}/sessions/${sessionId}/message`,
+      {
+        message
+      }
+    );
+  }
 
-.input-area {
-  display: flex;
-  gap: 12px;
-  align-items: flex-end;
-}
-
-.input-field {
-  flex: 1;
-}
-
-.loading {
-  display: flex;
-  justify-content: center;
-  margin: 16px 0;
+  // Retrieve the generated coaching plan
+  getCoachingPlan(sessionId: string) {
+    return this.http.get<any>(
+      `${this.baseUrl}/sessions/${sessionId}/plan`
+    );
+  }
 }
