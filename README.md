@@ -1,21 +1,17 @@
-<div class="planning-page">
-  <h1>Coaching Plan Preparation</h1>
+.planning-page {
+  padding: 24px;
+}
 
-  <app-chat
-    [messages]="messages"
-    [loading]="loading"
-    (messageSent)="onMessageSent($event)">
-  </app-chat>
+.actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
 
-  <div class="actions" *ngIf="planReady">
-    <button mat-raised-button color="primary" (click)="loadPlan()">
-      View Full Plan
-    </button>
-
-    <button mat-raised-button color="accent" (click)="startRoleplay()">
-      Start Role-Play
-    </button>
-  </div>
-
-  <pre *ngIf="coachingPlan">{{ coachingPlan | json }}</pre>
-</div>
+pre {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  overflow: auto;
+}
