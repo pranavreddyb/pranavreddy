@@ -1,27 +1,22 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+<div class="debrief-page">
+  <h1>Coaching Debrief</h1>
 
-@Component({
-  selector: 'app-debrief',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './debrief.html',
-  styleUrl: './debrief.css'
-})
-export class Debrief {
-  feedback = {
-    overallScore: 8.5,
-    strengths: [
-      'Clearly described the performance issue.',
-      'Used respectful and professional language.',
-      'Invited the employee to share their perspective.'
-    ],
-    improvements: [
-      'Ask more open-ended questions.',
-      'Summarize agreed next steps.',
-      'Confirm accountability and deadlines.'
-    ],
-    nextSteps:
-      'Schedule a follow-up meeting in two weeks to review progress.'
-  };
-}
+  <h2>Overall Score: {{ feedback.overallScore }}/10</h2>
+
+  <h3>Strengths</h3>
+  <ul>
+    <li *ngFor="let item of feedback.strengths">
+      {{ item }}
+    </li>
+  </ul>
+
+  <h3>Areas for Improvement</h3>
+  <ul>
+    <li *ngFor="let item of feedback.improvements">
+      {{ item }}
+    </li>
+  </ul>
+
+  <h3>Recommended Next Steps</h3>
+  <p>{{ feedback.nextSteps }}</p>
+</div>
