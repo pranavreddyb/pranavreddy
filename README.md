@@ -1,16 +1,23 @@
-import requests
-from requests.auth import HTTPBasicAuth
-
-organization = "DeloitteTaxTechnology"
-project = "Vega"
-pat = "YOUR_PAT_TOKEN"
-
-url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/1?api-version=7.0"
-
-response = requests.get(
-    url,
-    auth=HTTPBasicAuth('', pat)
+conn = pyodbc.connect(
+    'DRIVER={SQL Server};'
+    'SERVER=UI-6JXS7H4\\SQLEXPRESS;'
+    'DATABASE=AzureDevOpsDB;'
+    'Trusted_Connection=yes;'
 )
 
-print("Status:", response.status_code)
-print(response.json())
+cursor = conn.cursor()
+
+cursor.execute("""
+INSERT INTO work_items (work_item_id, title, state)
+VALUES (?, ?, ?)
+""",
+data["id"],
+data["fields"]["System.Title"],
+data["fields"]["System.State"]
+)
+
+conn.commit()
+
+print("Inserted into SQL Server successfully")
+
+conn.close()
