@@ -1,12 +1,16 @@
-.debrief-page {
-  padding: 24px;
-}
+import requests
+from requests.auth import HTTPBasicAuth
 
-pre {
-  margin-top: 24px;
-  padding: 16px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  white-space: pre-wrap;
-  line-height: 1.6;
-}
+organization = "DeloitteTaxTechnology"
+project = "Vega"
+pat = "YOUR_PAT_TOKEN"
+
+url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/1?api-version=7.0"
+
+response = requests.get(
+    url,
+    auth=HTTPBasicAuth('', pat)
+)
+
+print("Status:", response.status_code)
+print(response.json())
