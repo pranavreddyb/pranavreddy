@@ -1,23 +1,18 @@
-conn = pyodbc.connect(
-    'DRIVER={SQL Server};'
-    'SERVER=UI-6JXS7H4\\SQLEXPRESS;'
-    'DATABASE=AzureDevOpsDB;'
-    'Trusted_Connection=yes;'
-)
+data = response.json()
 
-cursor = conn.cursor()
+# STEP 2 — Extract fields
 
-cursor.execute("""
-INSERT INTO work_items (work_item_id, title, state)
-VALUES (?, ?, ?)
-""",
-data["id"],
-data["fields"]["System.Title"],
-data["fields"]["System.State"]
-)
+work_item_id = data["id"]
 
-conn.commit()
+title = data["fields"].get("System.Title")
 
-print("Inserted into SQL Server successfully")
+state = data["fields"].get("System.State")
 
-conn.close()
+work_item_type = data["fields"].get("System.WorkItemType")
+
+assigned_to = data["fields"].get("System.AssignedTo", {}).get("displayName")
+
+created_date = data["fields"].get("System.CreatedDate")
+
+
+payload_json = json.dumps(data)
