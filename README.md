@@ -1,54 +1,33 @@
-import requests
-from requests.auth import HTTPBasicAuth
+payload_json = json.dumps(data)
 
-organization = "DeloitteTaxTechnology"
-project = "Vega"
-pat = "YOUR_PAT"
-
-url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/wiql?api-version=7.0"
-
-query = {
-    "query": """
-    SELECT [System.Id]
-    FROM WorkItems
-    WHERE [System.TeamProject] = 'Vega'
-    """
-}
-
-response = requests.post(
-    url,
-    json=query,
-    auth=HTTPBasicAuth('', pat)
+cursor.execute("""
+INSERT INTO raw_work_items
+(work_items_id, payload)
+VALUES (?, ?)
+""",
+data["id"],
+payload_json
 )
 
-# ADD HERE ↓↓↓
+fields = data["fields"]
 
-data = response.json()
+title = fields.get("System.Title")
+state = fields.get("System.State")
+work_item_type = fields.get("System.WorkItemType")
+assigned_to = fields.get("System.AssignedTo", {}).get("displayName")
+created_by = fields.get("System.CreatedBy", {}).get("displayName")
 
-work_item_ids = [item["id"] for item in data["workItems"]]
+cursor.execute("""
+INSERT INTO work_items_clean
+(work_item_id, title, state, work_item_type, assigned_to, created_by)
+VALUES (?, ?, ?, ?, ?, ?)
+""",
+data["id"],
+title,
+state,
+work_item_type,
+assigned_to,
+created_by
+)
 
-print("Total Work Items:", len(work_item_ids))
-
-for work_item_id in work_item_ids[:5]:
-
-    workitem_url = (
-        f"https://dev.azure.com/{organization}/{project}"
-        f"/_apis/wit/workitems/{work_item_id}?api-version=7.0"
-    )
-
-    response = requests.get(
-        workitem_url,
-        auth=HTTPBasicAuth('', pat)
-    )
-
-    if response.status_code != 200:
-        print(f"Failed to fetch {work_item_id}")
-        continue
-
-    data = response.json()
-
-    print(
-        "ID:", data["id"],
-        "| Title:", data["fields"].get("System.Title"),
-        "| State:", data["fields"].get("System.State")
-    )
+print("Inserted:", data["id"])
