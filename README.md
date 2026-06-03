@@ -1,7 +1,3 @@
-SELECT
-    COUNT(*) AS TotalRows,
-    COUNT(priority) AS PriorityFilled,
-    COUNT(changed_by) AS ChangedByFilled,
-    COUNT(area_path) AS AreaPathFilled,
-    COUNT(iteration_path) AS IterationPathFilled
-FROM dbo.work_items_clean;
+SELECT TOP 20
+JSON_VALUE(payload, '$.fields."System.Tags"') AS Tags
+FROM dbo.raw_work_items;
