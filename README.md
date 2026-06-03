@@ -1,4 +1,25 @@
-created_by = fields.get("System.CreatedBy", {}).get("displayName")
-changed_by = fields.get("System.ChangedBy", {}).get("displayName")
-team_project = fields.get("System.TeamProject")
-tags = fields.get("System.Tags")
+import requests
+from requests.auth import HTTPBasicAuth
+
+organization = "DeloitteTaxTechnology"
+project = "Vega"
+pat = "YOUR_PAT"
+
+url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/wiql?api-version=7.0"
+
+query = {
+    "query": """
+    SELECT [System.Id]
+    FROM WorkItems
+    WHERE [System.TeamProject] = 'Vega'
+    """
+}
+
+response = requests.post(
+    url,
+    json=query,
+    auth=HTTPBasicAuth('', pat)
+)
+
+print(response.status_code)
+print(response.text)
