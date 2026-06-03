@@ -1,5 +1,11 @@
-SELECT TOP 1
-    JSON_VALUE(payload, '$.fields."Microsoft.VSTS.Common.Priority"') AS Priority,
-    JSON_VALUE(payload, '$.fields."System.ChangedBy".displayName') AS ChangedBy,
-    JSON_VALUE(payload, '$.fields."System.Tags"') AS Tags
-FROM dbo.raw_work_items;
+UPDATE w
+SET
+    w.priority =
+        JSON_VALUE(r.payload, '$.fields."Microsoft.VSTS.Common.Priority"'),
+
+    w.changed_by =
+        JSON_VALUE(r.payload, '$.fields."System.ChangedBy".displayName')
+
+FROM dbo.work_items_clean w
+INNER JOIN dbo.raw_work_items r
+    ON w.work_item_id = r.work_items_id;
