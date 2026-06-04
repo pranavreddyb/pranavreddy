@@ -1,26 +1,40 @@
-for i in range(0, len(work_item_ids), 200):
+for item in data["value"]:
 
-    batch_ids = work_item_ids[i:i+200]
+    payload_json = json.dumps(item)
 
-    ids_string = ",".join(str(x) for x in batch_ids)
-
-    batch_url = (
-        f"https://dev.azure.com/{organization}/{project}"
-        f"/_apis/wit/workitems?ids={ids_string}&api-version=7.0"
+    cursor.execute("""
+    INSERT INTO raw_work_items
+    (work_items_id, payload)
+    VALUES (?, ?)
+    """,
+    item["id"],
+    payload_json
     )
 
-    response = requests.get(
-        batch_url,
-        auth=HTTPBasicAuth('', pat)
+    fields = item["fields"]
+
+    title = fields.get("System.Title")
+    state = fields.get("System.State")
+    work_item_type = fields.get("System.WorkItemType")
+
+    assigned_to = fields.get(
+        "System.AssignedTo", {}
+    ).get("displayName")
+
+    created_by = fields.get(
+        "System.CreatedBy", {}
+    ).get("displayName")
+
+    cursor.execute("""
+    INSERT INTO work_items_clean
+    (work_item_id, title, state, work_item_type,
+     assigned_to, created_by)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """,
+    item["id"],
+    title,
+    state,
+    work_item_type,
+    assigned_to,
+    created_by
     )
-
-    data = response.json()
-
-    print(
-        f"Batch {i//200 + 1}: Retrieved",
-        len(data["value"]),
-        "items"
-    )
-
-    for item in data["value"]:
-        # existing insert logic here
