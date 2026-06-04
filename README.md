@@ -1,9 +1,18 @@
-SELECT
-    COUNT(*) AS TotalRows,
-    COUNT(area_path) AS AreaPath,
-    COUNT(iteration_path) AS IterationPath,
-    COUNT(priority) AS Priority,
-    COUNT(created_by) AS CreatedBy,
-    COUNT(changed_by) AS ChangedBy,
-    COUNT(team_project) AS TeamProject
-FROM dbo.work_items_clean;
+
+ids = work_item_ids[:5]
+
+ids_string = ",".join(str(i) for i in ids)
+
+url = (
+    f"https://dev.azure.com/{organization}/{project}"
+    f"/_apis/wit/workitems?ids={ids_string}&api-version=7.0"
+)
+
+response = requests.get(
+    url,
+    auth=HTTPBasicAuth('', pat)
+)
+
+data = response.json()
+
+print("Returned Work Items:", len(data["value"]))
