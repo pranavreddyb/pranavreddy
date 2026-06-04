@@ -1,19 +1,26 @@
-print("Total Work Items:", len(work_item_ids))
+for i in range(0, len(work_item_ids), 200):
 
-ids = work_item_ids[:5]
+    batch_ids = work_item_ids[i:i+200]
 
-ids_string = ",".join(str(i) for i in ids)
+    ids_string = ",".join(str(x) for x in batch_ids)
 
-batch_url = (
-    f"https://dev.azure.com/{organization}/{project}"
-    f"/_apis/wit/workitems?ids={ids_string}&api-version=7.0"
-)
+    batch_url = (
+        f"https://dev.azure.com/{organization}/{project}"
+        f"/_apis/wit/workitems?ids={ids_string}&api-version=7.0"
+    )
 
-response = requests.get(
-    batch_url,
-    auth=HTTPBasicAuth('', pat)
-)
+    response = requests.get(
+        batch_url,
+        auth=HTTPBasicAuth('', pat)
+    )
 
-data = response.json()
+    data = response.json()
 
-print("Returned:", len(data["value"]))
+    print(
+        f"Batch {i//200 + 1}: Retrieved",
+        len(data["value"]),
+        "items"
+    )
+
+    for item in data["value"]:
+        # existing insert logic here
