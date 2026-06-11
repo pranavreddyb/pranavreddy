@@ -1,2 +1,15 @@
-print("SERVER:", cursor.execute("SELECT @@SERVERNAME").fetchone()[0])
-print("DATABASE:", cursor.execute("SELECT DB_NAME()").fetchone()[0])
+cursor.execute("""
+INSERT INTO dbo.WorkItem_Root
+(
+    WorkItemId,
+    WorkItemType,
+    SourceProject,
+    Payload
+)
+VALUES (?, ?, ?, ?)
+""",
+item["id"],
+item["fields"].get("System.WorkItemType"),
+project,
+payload_json
+)
